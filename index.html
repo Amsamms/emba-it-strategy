@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>EMBA IT Strategy, Group Reference Hub</title>
+<style>
+  :root{
+    --bg:#0b130f; --bg2:#101c15; --card:#152319; --card2:#18291e;
+    --border:#26392d; --border2:#33503d;
+    --text:#dbe7df; --muted:#9bb0a3; --faint:#7c9286;
+    --green:#46b07a; --green-soft:#67cf97; --gold:#dcb646; --gold-soft:#eed282;
+    --red:#e3776a; --redbg:#2a1714; --greenbg:#13251a;
+    --display:Georgia,'Times New Roman',serif;
+    --body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.7;font-size:16.5px}
+  a{color:var(--gold-soft);text-decoration:none}
+  a:hover{text-decoration:underline}
+  ::selection{background:var(--green);color:#04140b}
+
+  .wrap{display:grid;grid-template-columns:268px 1fr;max-width:1280px;margin:0 auto}
+  .side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--border);
+    padding:22px 18px 40px;background:var(--bg2)}
+  .main{padding:0 clamp(20px,4vw,64px) 120px;min-width:0}
+
+  .brand{font-family:var(--display);font-weight:700;font-size:18px;color:var(--green-soft);line-height:1.2;margin-bottom:4px}
+  .brand small{display:block;color:var(--faint);font-family:var(--body);font-size:11px;font-weight:400;letter-spacing:1px;text-transform:uppercase;margin-top:6px}
+  nav.toc{margin-top:22px}
+  nav.toc a{display:block;color:var(--muted);font-size:13.5px;padding:6px 10px;border-radius:7px;border-left:2px solid transparent}
+  nav.toc a:hover{color:var(--text);background:var(--card);text-decoration:none}
+  nav.toc a.active{color:var(--green-soft);background:var(--card);border-left-color:var(--gold)}
+  nav.toc .grp{color:var(--faint);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;margin:18px 0 4px 10px}
+
+  .hero{padding:56px 0 30px;border-bottom:1px solid var(--border)}
+  .tag{display:inline-block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+    border:1px solid var(--border2);border-radius:999px;padding:5px 14px;margin-bottom:20px}
+  .hero h1{font-family:var(--display);font-size:clamp(30px,4.6vw,48px);line-height:1.08;color:#fff;margin-bottom:14px}
+  .hero p.lead{font-size:clamp(16px,1.6vw,19px);color:var(--muted);max-width:65ch}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:26px;font-size:14px}
+  .meta-row b{color:var(--gold-soft);font-weight:600}
+  .meta-row span{color:var(--muted)}
+  .notice{margin-top:24px;background:var(--greenbg);border:1px solid var(--border2);border-left:4px solid var(--green);
+    border-radius:8px;padding:12px 16px;font-size:14px;color:var(--muted)}
+  .notice b{color:var(--green-soft)}
+
+  section{padding:44px 0;border-bottom:1px solid var(--border)}
+  section>h2{font-family:var(--display);font-size:clamp(23px,2.8vw,32px);color:#fff;margin-bottom:6px;scroll-margin-top:20px}
+  .kicker{color:var(--gold);font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  h3{font-family:var(--display);font-size:21px;color:var(--green-soft);margin:28px 0 8px}
+  h4{font-size:15.5px;color:var(--gold-soft);margin:18px 0 6px;letter-spacing:.3px}
+  p{margin:12px 0;color:var(--text)}
+  .muted{color:var(--muted)}
+  ul,ol{margin:10px 0 10px 22px}
+  li{margin:8px 0}
+  .q{font-style:italic;color:var(--gold-soft)}
+
+  /* plain-language helper box */
+  .define{background:var(--card2);border:1px solid var(--border2);border-left:4px solid var(--gold);
+    border-radius:8px;padding:12px 16px;margin:14px 0;font-size:15px}
+  .define b{color:var(--gold-soft)}
+  .term{color:var(--green-soft);font-weight:600}
+
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+  .card h4{margin-top:0}
+  .card.accent{border-left:4px solid var(--gold)}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+  .stat .n{font-family:var(--display);font-size:26px;color:var(--gold);font-weight:700}
+  .stat .l{font-size:12px;color:var(--muted);margin-top:4px}
+
+  .tbl-wrap{overflow-x:auto;margin:16px 0}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:480px}
+  th,td{border:1px solid var(--border);padding:10px 12px;text-align:left;vertical-align:top}
+  thead th{background:var(--card2);color:#fff;font-weight:600}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.02)}
+  td.decl{color:var(--red)}
+  td.emer{color:var(--green-soft)}
+  .pill{display:inline-block;font-size:12px;font-weight:700;color:#06140d;padding:2px 11px;border-radius:999px}
+  .pill.strong{background:var(--green-soft)}.pill.mod{background:var(--gold-soft)}
+
+  figure{margin:22px 0;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+  figure img{width:100%;height:auto;border-radius:8px;display:block;background:#fff}
+  figcaption{font-size:13.5px;color:var(--muted);margin-top:10px;text-align:center;font-style:italic}
+  .readchart{font-size:14px;color:var(--muted);background:var(--greenbg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:-8px}
+  .readchart b{color:var(--green-soft)}
+
+  .callout{background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:18px 22px;margin:18px 0}
+  .callout.verdict{background:linear-gradient(180deg,#14271c,#101c15);border-left:4px solid var(--green)}
+  .callout b.g{color:var(--gold-soft)}
+
+  .dl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:18px}
+  .dl{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--border);
+    border-radius:12px;padding:16px 18px;transition:border-color .2s,transform .2s}
+  .dl:hover{border-color:var(--border2);transform:translateY(-2px);text-decoration:none}
+  .dl .ico{flex:0 0 auto;width:42px;height:42px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:12px;color:#06140d}
+  .ico.doc{background:#5b8fd1}.ico.ppt{background:#d98a4e}.ico.pdf{background:#e3776a}.ico.web{background:var(--green-soft)}.ico.md{background:var(--gold-soft)}
+  .dl .t{font-weight:600;color:var(--text);font-size:14.5px}
+  .dl .s{font-size:12px;color:var(--faint)}
+  .btn{display:inline-flex;align-items:center;gap:9px;background:var(--green);color:#04140b;font-weight:700;
+    padding:12px 22px;border-radius:10px;font-size:15px;margin-top:6px}
+  .btn:hover{background:var(--green-soft);text-decoration:none}
+  .btn.gold{background:var(--gold)}.btn.gold:hover{background:var(--gold-soft)}
+
+  .source{font-size:12.5px;color:var(--faint)}
+  .refs{font-size:14.5px}.refs li{margin:10px 0;padding-left:4px}
+  /* glossary */
+  dl.gloss{margin:14px 0}
+  dl.gloss dt{color:var(--green-soft);font-weight:700;margin-top:16px;font-size:15.5px}
+  dl.gloss dd{margin:4px 0 0;color:var(--muted)}
+  code{font-family:var(--mono);font-size:13px;background:var(--card2);padding:2px 6px;border-radius:5px;color:var(--gold-soft)}
+  footer{padding:40px 0 10px;color:var(--faint);font-size:13.5px}
+
+  .menu-btn{display:none}
+  @media(max-width:900px){
+    .wrap{grid-template-columns:1fr}
+    .side{position:fixed;z-index:50;width:280px;left:-300px;transition:left .25s;box-shadow:0 0 40px rgba(0,0,0,.5)}
+    .side.open{left:0}
+    .menu-btn{display:flex;position:fixed;top:14px;left:14px;z-index:60;background:var(--green);color:#04140b;
+      border:none;border-radius:9px;width:44px;height:44px;font-size:20px;align-items:center;justify-content:center;cursor:pointer}
+    .main{padding-top:60px}
+    .g2,.g3,.g4{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<button class="menu-btn" id="menuBtn" aria-label="Toggle menu">&#9776;</button>
+<div class="wrap">
+
+  <aside class="side" id="side">
+    <div class="brand">EMBA &middot; IT Strategy
+      <small>Group Reference Hub</small>
+    </div>
+    <nav class="toc" id="toc">
+      <a href="#start">Start Here</a>
+      <a href="#overview">The Two Projects</a>
+      <a href="#downloads">Downloads</a>
+      <div class="grp">Project 1 &middot; Banking &amp; Jobs</div>
+      <a href="#a1-intro">1. The Big Question</a>
+      <a href="#a1-quant">2. The Numbers</a>
+      <a href="#a1-qual">3. How the Work Changed</a>
+      <a href="#a1-declined">4. Jobs That Shrank</a>
+      <a href="#a1-emerging">5. New Jobs</a>
+      <a href="#a1-egypt">6. The Egypt Story</a>
+      <a href="#a1-rebuttal">7. Does Tech Kill Jobs?</a>
+      <a href="#a1-conclusion">8. The Takeaway</a>
+      <div class="grp">Project 2 &middot; The NBE Bank</div>
+      <a href="#a2-strategy">The Bank's Plan</a>
+      <a href="#a2-it">The Bank's Technology</a>
+      <a href="#a2-alignment">Do They Match?</a>
+      <a href="#a2-reco">Our Advice</a>
+      <a href="#a2-live">Live Slideshow</a>
+      <div class="grp">Reference</div>
+      <a href="#data">All the Facts</a>
+      <a href="#references">Sources</a>
+      <a href="#glossary">Word List</a>
+      <a href="#method">How We Made This</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <header class="hero">
+      <span class="tag">Internal Group Resource</span>
+      <h1>Technology and Banking, Explained Simply</h1>
+      <p class="lead">This page holds everything behind our two course projects, written in plain English. Every time we use a technical word, we stop and explain what it means in everyday language first. You do not need any background in banking or computers to follow along.</p>
+      <div class="meta-row">
+        <span><b>Group:</b> Ahmed Awad &middot; Tariq Salama &middot; Ahmed Sabri</span>
+        <span><b>Course:</b> Executive MBA, IT Strategy</span>
+        <span><b>Instructor:</b> Dr. Ghada</span>
+      </div>
+      <div class="notice"><b>What this page is:</b> a study and reading resource for our group, not the thing we hand in for marks. The graded work is the Word report and the PowerPoint slideshow, both in <a href="#downloads">Downloads</a> below.</div>
+    </header>
+
+    <!-- START HERE -->
+    <section id="start">
+      <div class="kicker">Start Here</div>
+      <h2>Two everyday words to know first</h2>
+      <p>Almost everything on this page comes back to two ideas. Let us pin them down in plain language before we go further.</p>
+      <div class="define"><b>IT</b> is short for <span class="term">information technology</span>. It just means all the computers, software, phones, internet, and networks that a business uses to store and move information. When we say "a bank invested in IT," we mean the bank spent money on its computer systems, apps, and the people who run them.</div>
+      <div class="define"><b>Automation</b> means getting a machine or a piece of software to do a job that a person used to do by hand. A cash machine in a wall doing what a human cashier used to do is automation. So is software that fills in forms automatically.</div>
+      <p class="muted">That is the whole foundation. Keep those two in mind and the rest follows easily. There is also a full <a href="#glossary">Word List</a> at the bottom if you ever want a quick reminder of any term.</p>
+    </section>
+
+    <!-- OVERVIEW -->
+    <section id="overview">
+      <div class="kicker">The Two Projects</div>
+      <h2>What we were asked to do</h2>
+      <p>Our course gave us two separate tasks. This page covers both of them, fully.</p>
+      <div class="grid g2" style="margin-top:18px">
+        <div class="card accent">
+          <h4>Project 1 &middot; A written report</h4>
+          <p class="muted" style="margin:6px 0">We had to study how computers and automation changed the <b>jobs</b> in one industry. We chose <b>banking</b>. We looked at which jobs shrank, which new jobs appeared, and whether it is fair to say technology destroys jobs.</p>
+          <p class="source">We delivered this as a 7-page Word document with charts and sources.</p>
+        </div>
+        <div class="card accent">
+          <h4>Project 2 &middot; A short slideshow</h4>
+          <p class="muted" style="margin:6px 0">We had to pick a company and judge how well its technology choices support its overall business plan. We chose the <b>National Bank of Egypt</b>, the country's biggest bank. Then we gave our own advice on what it should do next.</p>
+          <p class="source">We delivered this as a 4-slide PowerPoint, plus a clickable web version.</p>
+        </div>
+      </div>
+      <p style="margin-top:18px">In short, Project 1 asks: <span class="q">How did technology change the jobs people do in banks?</span> Project 2 asks: <span class="q">Does the National Bank of Egypt's technology actually help it reach its goals?</span></p>
+    </section>
+
+    <!-- DOWNLOADS -->
+    <section id="downloads">
+      <div class="kicker">Files</div>
+      <h2>Downloads</h2>
+      <p class="muted">The work we hand in, in every format, plus our raw notes. "Format" just means the kind of file: a Word document, a PowerPoint, a PDF (a fixed, print-ready page), or a web page.</p>
+      <div class="dl-grid">
+        <a class="dl" href="downloads/Assignment1_Banking_IT_Impact.docx" download><span class="ico doc">DOCX</span><span><span class="t">Project 1, the report</span><br><span class="s">Word file you can edit</span></span></a>
+        <a class="dl" href="downloads/Assignment1_Banking_IT_Impact.pdf" download><span class="ico pdf">PDF</span><span><span class="t">Project 1, the report</span><br><span class="s">PDF, easy to read or print</span></span></a>
+        <a class="dl" href="downloads/Assignment2_NBE_Strategic_Alignment.pptx" download><span class="ico ppt">PPTX</span><span><span class="t">Project 2, the slides</span><br><span class="s">PowerPoint you can edit</span></span></a>
+        <a class="dl" href="downloads/Assignment2_NBE_Strategic_Alignment.pdf" download><span class="ico pdf">PDF</span><span><span class="t">Project 2, the slides</span><br><span class="s">PDF of the slideshow</span></span></a>
+        <a class="dl" href="downloads/Assignment2_NBE_Presentation.html" download><span class="ico web">HTML</span><span><span class="t">Project 2, clickable version</span><br><span class="s">Opens in any browser, even offline</span></span></a>
+        <a class="dl" href="downloads/research_notes.md" download><span class="ico md">MD</span><span><span class="t">Our research notes</span><br><span class="s">Every fact with its source</span></span></a>
+      </div>
+    </section>
+
+    <!-- ============ PROJECT 1 ============ -->
+    <section id="a1-intro">
+      <div class="kicker">Project 1 &middot; Banking and Jobs</div>
+      <h2>1. The big question</h2>
+      <p>Banks run almost entirely on information: account balances, payments, records. Because of that, banks were among the very first businesses to put computers to heavy use, and they have kept doing so ever since.</p>
+      <p>Here are a few tools that show up again and again in this story, explained simply:</p>
+      <div class="define"><b>ATM</b> stands for <span class="term">automated teller machine</span>. It is the cash machine in the wall that lets you take out money or check your balance without talking to a human. A <span class="term">teller</span> is the staff member behind the counter who used to handle that cash for you.</div>
+      <div class="define"><b>Mobile app</b> banking means doing your banking through a small program on your phone. <b>Online banking</b> means doing it through a website on a computer.</div>
+      <div class="define"><b>AI</b> means <span class="term">artificial intelligence</span>: software that can do tasks that normally need human thinking, such as answering questions, spotting a fake transaction, or reading a document. <b>RPA</b> means <span class="term">robotic process automation</span>: software "robots" that copy the dull, repetitive computer steps a person would otherwise do by hand, like typing the same numbers into several screens.</div>
+      <p>So our question for this project is simple: <span class="q">How did all this technology change the jobs people do in banks?</span> We look at the hard numbers, then at how the daily work itself changed, then at which jobs faded and which new ones grew. We use worldwide data, with examples from Egypt. Finally, we tackle the worry that technology just throws people out of work.</p>
+    </section>
+
+    <section id="a1-quant">
+      <h2>2. What the numbers show</h2>
+      <p>The clearest sign of technology's effect is the slow disappearance of the bank teller and the branch (the local bank office you walk into). In the United States, the number of tellers has dropped by nearly 30 percent since 2010. The US government's labour statistics office expects it to fall another 13 percent between 2024 and 2034. The number of branches has shrunk just as fast, from about 100,000 in 2009 to roughly 77,500 at the start of 2024 and fewer than 65,000 by the middle of 2025.</p>
+      <figure>
+        <img src="assets/charts/chart1_us_branches.png" alt="Line chart showing US bank branches falling from 100,000 in 2009 to 65,000 in 2025">
+        <figcaption>Figure 1. The number of US bank branches over time.</figcaption>
+      </figure>
+      <p class="readchart"><b>How to read this chart:</b> the line goes down over the years. Each dot is a count of bank branches: 100,000 in 2009, down to 77,500 in 2024, down to 65,000 by mid-2025. A falling line here means banks keep closing local offices because people now bank on their phones.</p>
+      <p>The reason is simple swapping: tasks that used to need a human teller are now done by machines and apps. Worldwide, automated chat programs (called <span class="term">chatbots</span>, which answer customer questions by text instead of a human) and similar tools already handle up to 65 percent of routine, everyday banking requests.</p>
+      <p>But here is the part people often miss. The same technology that removes some jobs also creates others. The World Economic Forum (an international research group that studies the global economy) expects technology and other changes to <b>create about 170 million jobs</b> around the world between 2025 and 2030, while <b>removing about 92 million</b>. That is a net gain of roughly <b>78 million jobs</b>. "Net" just means the result after you subtract the losses from the gains.</p>
+      <figure>
+        <img src="assets/charts/chart2_wef_netjobs.png" alt="Bar chart showing 170 million jobs created, 92 million displaced, 78 million net gain">
+        <figcaption>Figure 2. New jobs versus lost jobs worldwide, 2025 to 2030.</figcaption>
+      </figure>
+      <p class="readchart"><b>How to read this chart:</b> the tall green bar on the left is the new jobs created (170 million). The red bar in the middle dips below the line to show jobs lost (92 million). The gold bar on the right is what is left over after you subtract one from the other: a gain of 78 million. The point is that the green and gold bars are bigger than the red one, so the world ends up with more jobs, not fewer.</p>
+      <h4>The headline numbers in one place</h4>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>What we measured</th><th>The figure</th><th>Where it comes from</th></tr></thead>
+        <tbody>
+          <tr><td>US bank tellers since 2010</td><td>Down nearly 30%</td><td>Burning Glass Institute</td></tr>
+          <tr><td>US tellers expected change, 2024 to 2034</td><td>Down 13%</td><td>US Bureau of Labor Statistics</td></tr>
+          <tr><td>US bank branches, 2009 to 2025</td><td>100,000 down to below 65,000</td><td>S&amp;P Global; FDIC</td></tr>
+          <tr><td>Routine requests now handled by machines</td><td>Up to 65%</td><td>CoinLaw</td></tr>
+          <tr><td>Net new jobs worldwide, 2025 to 2030</td><td>+78 million</td><td>World Economic Forum</td></tr>
+          <tr><td>Job skills that will need updating by 2030</td><td>39%</td><td>World Economic Forum</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="a1-qual">
+      <h2>3. How the daily work changed</h2>
+      <p>Numbers only tell half the story. Technology did not just cut some jobs, it changed what the remaining jobs feel like day to day.</p>
+      <p>The teller who once spent the day counting cash is now expected to be more of an adviser: someone who helps customers with bigger decisions, sells them suitable products, sorts out tricky problems, and shows them how to use the bank's apps. The boring, repeatable parts moved to machines. The parts that are hard for a machine, such as giving advice, using good judgement, building trust, and handling a relationship, became the main job.</p>
+      <p>This means staff need new skills. The World Economic Forum estimates that 39 percent of the skills people use at work today will need to be updated or replaced between 2025 and 2030. Even a traditional bank job now expects comfort with apps and data, and a basic understanding of <span class="term">cybersecurity</span> (protecting computers and customer information from hackers and online attacks).</p>
+    </section>
+
+    <section id="a1-declined">
+      <h2>4. The jobs that shrank or disappeared</h2>
+      <p>The jobs most at risk all share one feature: they are built on routine, rule-following, repeat-the-same-thing tasks, which is exactly what software does cheaply and quickly. The clearest examples:</p>
+      <ul>
+        <li><b>Bank tellers and cashiers</b>, replaced by cash machines, phone apps, and self-service.</li>
+        <li><b>Data-entry and cheque-processing clerks</b> (people who typed information from paper into the computer, or processed paper cheques). Software now scans and handles this automatically.</li>
+        <li><b>Back-office checking staff.</b> The "back office" is the behind-the-scenes part of a bank that processes paperwork; customers never see it. Much of its routine checking is now automated.</li>
+        <li><b>Manual bookkeepers and filing staff</b>, made unnecessary by digital records that update themselves.</li>
+        <li><b>Routine call-centre agents</b>, increasingly replaced by chatbots for simple, first-line questions.</li>
+      </ul>
+    </section>
+
+    <section id="a1-emerging">
+      <h2>5. The new jobs that grew</h2>
+      <p>At the same time, technology created whole new kinds of work that barely existed a generation ago. The banking industry is now a big employer of technology specialists. The table below puts the shrinking jobs next to the growing ones, with a short note on what each growing role means.</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Jobs that shrank</th><th>Jobs that grew (and what they do)</th></tr></thead>
+        <tbody>
+          <tr><td class="decl">Bank tellers and cashiers</td><td class="emer"><b>Data scientists and data engineers</b>: people who study large piles of data to find useful patterns.</td></tr>
+          <tr><td class="decl">Data-entry and cheque clerks</td><td class="emer"><b>AI specialists</b>: people who build and train the "smart" software.</td></tr>
+          <tr><td class="decl">Back-office checking staff</td><td class="emer"><b>Fintech engineers</b>: builders of finance apps. "Fintech" is short for financial technology, meaning tech-driven money services.</td></tr>
+          <tr><td class="decl">Manual bookkeepers and filing staff</td><td class="emer"><b>Cybersecurity analysts</b>: people who defend the bank from hackers.</td></tr>
+          <tr><td class="decl">Routine call-centre agents</td><td class="emer"><b>Cloud engineers</b>: people who run systems on rented internet computers (the "cloud," explained later).</td></tr>
+          <tr><td class="decl">Physical-branch support roles</td><td class="emer"><b>RPA and compliance-tech specialists</b>: people who automate routine tasks and use software to help the bank follow the rules.</td></tr>
+        </tbody>
+      </table></div>
+      <p>The pattern is steady: demand moves away from manual, repetitive tasks and toward people who build, protect, and make sense of the technology that now runs the bank.</p>
+    </section>
+
+    <section id="a1-egypt">
+      <h2>6. The Egypt story</h2>
+      <p>Egypt is a clear, recent example of all this happening fast. First, one key idea:</p>
+      <div class="define"><b>Financial inclusion</b> means making sure ordinary people, especially poorer people, can actually use basic financial services like a bank account or a way to send and receive money. People without any account are called the <span class="term">unbanked</span>.</div>
+      <p>Egypt pushed hard to bring more people into the banking system, mostly through phones rather than new branches. The share of adults with access to financial services rose from about 27 percent in 2016 to 74.8 percent by the end of 2024 and 76.3 percent by mid-2025.</p>
+      <figure>
+        <img src="assets/charts/chart3_egypt_inclusion.png" alt="Bar chart showing Egypt financial inclusion rising from 27 percent in 2016 to 76.3 percent in 2025">
+        <figcaption>Figure 3. The share of Egyptian adults with access to financial services.</figcaption>
+      </figure>
+      <p class="readchart"><b>How to read this chart:</b> each bar is taller than the one before it. In 2016 only about 1 in 4 adults (27 percent) had access. By 2025 it is about 3 in 4 (76.3 percent). Taller bars over time mean far more people are now inside the banking system, mostly thanks to phone-based services.</p>
+      <p>The tools behind this are striking. By mid-2025, <b>InstaPay</b> (an Egyptian service that lets you send money instantly between banks from your phone, any time of day) had passed 16 million users and 1.1 billion transfers worth EGP 2.4 trillion. The national <b>Meeza</b> card (Egypt's own payment card, similar to a Visa or Mastercard but run locally) had passed 43.5 million cards. <b>Mobile wallets</b> (money stored on your phone that you can pay with directly) reached 55.5 million. Big banks, including the National Bank of Egypt, poured money into apps and tech. The result is the same as everywhere else: routine branch jobs are under pressure, while demand grows for app builders, data analysts, and security specialists.</p>
+    </section>
+
+    <section id="a1-rebuttal">
+      <h2>7. So, does technology destroy jobs?</h2>
+      <p>Many people worry that computers simply put humans out of work. The banking story gives a more careful, and more hopeful, answer.</p>
+      <p>The classic example is the cash machine. When ATMs spread in the 1990s and 2000s, everyone predicted the end of the bank teller. The opposite happened at first. Because ATMs made each branch cheaper to run, banks opened more branches, so the total number of tellers held steady for years, even as their work shifted toward sales and helping customers. Technology changed the job before it cut the headcount.</p>
+      <p>The big-picture numbers point the same way. The roughly 92 million jobs expected to disappear worldwide by 2030 are more than balanced out by the roughly 170 million expected to appear, leaving a <b>net gain of about 78 million jobs</b>. The honest conclusion is that technology <i>changes</i> work far more than it destroys it. Old routine jobs fade, but new and often better-paid jobs appear, as long as workers get the chance to learn new skills.</p>
+      <p>So the real danger is not mass unemployment. It is a <b>skills gap</b>: the risk that people are not trained for the new roles fast enough. The banks and workers who do best are the ones who treat technology as a helper that takes over the boring tasks, freeing people to focus on advice, problem-solving, and trust, which are the things customers still value most.</p>
+    </section>
+
+    <section id="a1-conclusion">
+      <h2>8. The takeaway</h2>
+      <p>Technology has reshaped banking jobs more than almost any other force in the industry's history. In plain terms: it cut the number of tellers and branches and automated much of the back-office paperwork; it turned the jobs that remain into advice-and-service roles; it retired some old jobs entirely while creating new ones in data, AI, and security. Egypt shows the same pattern arriving fast in a developing country. The lesson for banks and for the people who work in them is clear: technology does not end careers in banking, it changes them, and it rewards those who are ready to keep learning.</p>
+    </section>
+
+    <!-- ============ PROJECT 2 ============ -->
+    <section id="a2-strategy">
+      <div class="kicker">Project 2 &middot; The National Bank of Egypt</div>
+      <h2>The bank's overall plan</h2>
+      <p>For the second project we picked the <b>National Bank of Egypt</b>, usually shortened to <b>NBE</b>. It was founded in 1898 and is the largest bank in Egypt. First, a couple of numbers explained:</p>
+      <div class="define"><b>Total assets</b> is the full value of everything the bank holds and is owed, a common way to measure a bank's size. NBE's total assets were about EGP 8.13 trillion at the end of 2024. In short, it is very big.</div>
+      <p>A company's <span class="term">strategy</span> is simply its overall game plan: what it is trying to achieve. NBE's plan rests on four main goals.</p>
+      <div class="grid g4" style="margin:18px 0">
+        <div class="stat"><div class="n">EGP 8.13tn</div><div class="l">Total size (assets), 2024</div></div>
+        <div class="stat"><div class="n">~20M</div><div class="l">Customers</div></div>
+        <div class="stat"><div class="n">~665</div><div class="l">Branches and offices</div></div>
+        <div class="stat"><div class="n">~30,000</div><div class="l">Employees</div></div>
+      </div>
+      <div class="grid g2">
+        <div class="card accent"><h4>1. Bring more people into banking</h4><p class="muted">Give ordinary and poorer Egyptians easy, cheap access to accounts and small loans (the financial inclusion idea from earlier).</p></div>
+        <div class="card accent"><h4>2. Help fund the country</h4><p class="muted">Pay for big national projects, roads and infrastructure, and smaller businesses. (A <b>small or medium-sized enterprise</b>, or SME, just means a smaller company, not a giant one.)</p></div>
+        <div class="card accent"><h4>3. Grow through digital and serve customers well</h4><p class="muted">Offer fast, around-the-clock, personalised banking on phones and online, and win over younger, tech-comfortable customers.</p></div>
+        <div class="card accent"><h4>4. Be responsible and sustainable</h4><p class="muted">Run the bank in a way that is good for the economy, the environment, society, and honest management. NBE calls its version of this the <b>EESG framework</b> (economic, environmental, social, governance). "Governance" means how honestly and carefully the company is run.</p></div>
+      </div>
+    </section>
+
+    <section id="a2-it">
+      <h2>The bank's technology</h2>
+      <p>NBE runs a large, serious set of computer systems. We grouped them into four areas. Some of the names below are technical, so each one is explained in plain words.</p>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <h4>The core engine</h4>
+          <ul>
+            <li><b>Core banking system:</b> the main computer system that runs every account and transaction. NBE uses a well-known one called Oracle Flexcube. It processes things in <b>real time</b>, meaning instantly, as they happen.</li>
+            <li><b>ERP and HRMS:</b> ERP (enterprise resource planning) is one big system that runs core operations like finance. HRMS handles staff records and pay.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Ways customers connect</h4>
+          <ul>
+            <li>The <b>NBE Mobile</b> phone app and <b>Al Ahly Net</b> online banking website.</li>
+            <li><b>NBE PhoneCash</b>, an <b>e-wallet</b> (money kept on your phone to pay with). Bills can be paid through <b>Fawry</b>, a popular Egyptian bill-payment service.</li>
+            <li>A nationwide network of cash machines and branches.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>New ideas and partners</h4>
+          <ul>
+            <li>With <b>Mastercard</b>, NBE introduced AI "digital humans" (lifelike on-screen assistants), the first bank in the Middle East to do so.</li>
+            <li>It led the launch of <b>Apple Pay</b> (paying by tapping your iPhone) in Egypt in 2024.</li>
+            <li>It owns finance-tech arms, <b>Al Ahly Momken</b> (handling electronic payments) and <b>Al Ahly Tamkeen</b> (giving tiny loans, called <b>microfinance</b>, to people normal banks would turn away).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>Keeping it safe</h4>
+          <ul>
+            <li>A system from <b>BIO-key</b> that controls who is allowed to log in to what.</li>
+            <li><b>MFA</b> (multi-factor authentication: proving who you are with more than one check, like a password plus a code on your phone) and <b>SSO</b> (single sign-on: one login that opens many systems) for all 30,000 staff.</li>
+            <li>A <b>Security Operations Centre</b>: a dedicated team and system that watches around the clock for hacker attacks and responds to them.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="a2-alignment">
+      <h2>Do the plan and the technology match up?</h2>
+      <p class="muted">This is the heart of the project. We take each of the bank's four goals and check whether its technology genuinely supports it. We rate each one as "Strong" (technology supports the goal well) or "Moderate" (partly, with room to improve).</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>The bank's goal</th><th>The technology that supports it</th><th>Our rating</th></tr></thead>
+        <tbody>
+          <tr><td>Bring more people into banking</td><td>The phone app, e-wallet, Meeza card, and the Momken and Tamkeen finance arms</td><td><span class="pill strong">Strong</span></td></tr>
+          <tr><td>Help fund the country</td><td>A large core system able to handle lending at national scale</td><td><span class="pill strong">Strong</span></td></tr>
+          <tr><td>Grow digitally and serve customers</td><td>NBE Mobile, the AI assistants, Apple Pay, and joined-up service across app, web, and branch</td><td><span class="pill strong">Strong</span></td></tr>
+          <tr><td>Be responsible and sustainable</td><td>Going paperless helps, but the "green" and responsibility side of its technology is still developing</td><td><span class="pill mod">Moderate</span></td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout verdict"><b class="g">Our overall judgement: a strong match.</b> At NBE, technology is not just a support tool in the basement, it is central to how the bank competes and grows. <b class="g">Things to keep an eye on:</b> connecting old systems to new ones, getting better at using its data, moving more onto the cloud, and making its technology more environmentally responsible.</div>
+    </section>
+
+    <section id="a2-reco">
+      <h2>Our advice to the board</h2>
+      <p class="muted">Finally, we suggest six technologies the bank should consider next. Each is explained in plain words, and each one answers one of the "things to keep an eye on" above.</p>
+      <div class="grid g3" style="margin-top:16px">
+        <div class="card"><h4>Generative AI</h4><p class="muted">AI that can write and talk, like a smart assistant. Use it to answer customer questions and to help judge who can safely be given a loan (called <b>credit scoring</b>).</p></div>
+        <div class="card"><h4>Better use of data</h4><p class="muted">Study customer data to offer each person services that genuinely fit them, instead of one-size-fits-all.</p></div>
+        <div class="card"><h4>The cloud</h4><p class="muted">"Cloud" means renting computing power over the internet instead of buying and housing all the machines yourself. It is cheaper and grows more easily.</p></div>
+        <div class="card"><h4>Open banking and APIs</h4><p class="muted">An <b>API</b> is a safe doorway that lets two apps share information. "Open banking" lets customers securely connect their bank to other approved apps, creating a wider ecosystem.</p></div>
+        <div class="card"><h4>Zero-trust security</h4><p class="muted">A security approach that trusts no one automatically and checks every single access request. Pair it with AI that spots fraud the instant it happens.</p></div>
+        <div class="card"><h4>Greener technology</h4><p class="muted">Use energy-efficient data centres (the big buildings full of computers) and proper tools to measure and report the bank's environmental impact.</p></div>
+      </div>
+    </section>
+
+    <section id="a2-live">
+      <h2>The live, clickable slideshow</h2>
+      <p>The NBE project is also available as a full-screen slideshow you can click through in your browser. Use the arrow keys or swipe to move between slides, and press the <code>F</code> key for fullscreen.</p>
+      <a class="btn gold" href="presentation.html" target="_blank" rel="noopener">Open the clickable NBE slideshow &rarr;</a>
+    </section>
+
+    <!-- ============ REFERENCE ============ -->
+    <section id="data">
+      <div class="kicker">Reference</div>
+      <h2>All the facts, with their sources</h2>
+      <p class="muted">Every number we used, grouped by topic, with where it came from. We gathered these from up-to-date sources on the internet.</p>
+
+      <h3>Banking worldwide: the jobs that shrank</h3>
+      <ul>
+        <li>US bank tellers: down nearly 30% since 2010; job adverts down about two-thirds. <span class="source">(Burning Glass Institute)</span></li>
+        <li>US tellers expected to fall another 13% from 2024 to 2034. <span class="source">(US Bureau of Labor Statistics, the US government's jobs-data office)</span></li>
+        <li>US bank branches: about 100,000 in 2009, about 77,500 at the start of 2024, below 65,000 by mid-2025. <span class="source">(S&amp;P Global; FDIC, the US bank regulator)</span></li>
+        <li>UK banks closed more than 450 branches in the first three months of 2025. <span class="source">(CoinLaw)</span></li>
+        <li>Up to 65% of routine banking requests are now handled by machines, not people. <span class="source">(CoinLaw)</span></li>
+        <li>Bank tellers and data-entry clerks are among the fastest-shrinking jobs worldwide. <span class="source">(World Economic Forum, Future of Jobs 2025)</span></li>
+      </ul>
+
+      <h3>Banking worldwide: the jobs that grew</h3>
+      <ul>
+        <li>Finance-app builders, big-data specialists, and AI specialists are among the fastest-growing jobs to 2030. <span class="source">(World Economic Forum)</span></li>
+        <li>About 170 million jobs created and 92 million removed worldwide, 2025 to 2030, a net gain of about 78 million. <span class="source">(World Economic Forum)</span></li>
+        <li>39% of the skills people use at work will need updating by 2030. <span class="source">(World Economic Forum)</span></li>
+        <li>Roles in demand: automation specialists, security analysts, data scientists, cloud engineers, and rule-following ("compliance") tech specialists. <span class="source">(SRMSB; Built In; Indeed)</span></li>
+      </ul>
+
+      <h3>Egypt</h3>
+      <ul>
+        <li>Access to financial services rose from about 27% (2016) to 74.8% (end 2024) and 76.3% (June 2025). <span class="source">(Daily News Egypt; Zawya)</span></li>
+        <li>InstaPay (instant phone-to-phone money transfers): more than 16 million users and 1.1 billion transfers worth EGP 2.4 trillion by June 2025. <span class="source">(Business Tech News / Central Bank of Egypt)</span></li>
+        <li>Meeza (Egypt's national payment card): more than 43.5 million cards by June 2025. <span class="source">(Transfi; AfricanEnda)</span></li>
+        <li>Mobile wallets (money stored on phones): 55.5 million by June 2025. <span class="source">(Central Bank of Egypt, via news reports)</span></li>
+        <li>Apple Pay launched December 2024; more than 40 million payments worth over EGP 32 billion by June 2025. <span class="source">(Central Bank of Egypt, via news reports)</span></li>
+      </ul>
+
+      <h3>The National Bank of Egypt (NBE)</h3>
+      <ul>
+        <li>Founded 1898; Egypt's largest bank by almost every measure; third-largest among Arab banks.</li>
+        <li>Total size (assets) of EGP 8.13 trillion at the end of 2024 (up from EGP 5.23 trillion a year earlier). <span class="source">(NBE accounts)</span></li>
+        <li>About 665 branches and offices, nearly 20 million customers, about 30,000 staff. <span class="source">(NBE; BIO-key / StockTitan)</span></li>
+        <li>Main systems: Oracle Flexcube (the core banking engine, since 2016), Oracle finance and staff systems, and an early experiment with a shared digital record system called blockchain (a tamper-resistant shared ledger), since 2018. <span class="source">(AppsRunTheWorld)</span></li>
+        <li>Customer tools: NBE Mobile app, Al Ahly Net website, NBE PhoneCash wallet, and bill payment through Fawry. <span class="source">(Zawya; MenaFN)</span></li>
+        <li>With Mastercard (September 2024): AI "digital humans," the first bank in the Middle East to use them. <span class="source">(Mastercard newsroom)</span></li>
+        <li>Led the launch of Apple Pay in Egypt in 2024. <span class="source">(CIO; news reports)</span></li>
+        <li>Finance-tech arms: Al Ahly Momken (electronic payments, 40,000 payment terminals) and Al Ahly Tamkeen (small loans for 100,000+ people). <span class="source">(The Startup Scene; Daily News Egypt)</span></li>
+        <li>Security: a login-control system from BIO-key with multi-step login for 30,000 staff, plus a round-the-clock cyber-defence team. <span class="source">(Retail Banker International; StockTitan)</span></li>
+        <li>Responsibility: an EESG plan and a climate-finance strategy. <span class="source">(Climate Lens Advisors; NBE Responsible Banking)</span></li>
+      </ul>
+    </section>
+
+    <section id="references">
+      <h2>Sources</h2>
+      <p class="muted">The full list of where our facts came from, written in APA style (a standard way of listing sources used in universities). You can click any link to read the original.</p>
+      <ol class="refs">
+        <li>American Enterprise Institute. (n.d.). <i>What ATMs and bank tellers reveal about the rise of the robots and jobs.</i> <a href="https://www.aei.org/economics/what-atms-bank-tellers-rise-robots-and-jobs/" target="_blank" rel="noopener">aei.org</a></li>
+        <li>Burning Glass Institute. (n.d.). <i>The case of the vanishing teller: How banking's entry-level jobs are transforming.</i> <a href="https://www.burningglassinstitute.org/bginsights/the-case-of-the-vanishing-teller-how-bankings-entry-level-jobs-are-transforming" target="_blank" rel="noopener">burningglassinstitute.org</a></li>
+        <li>CoinLaw. (2026). <i>Bank branch closure statistics 2026: Global closures now.</i> <a href="https://coinlaw.io/bank-branch-closure-statistics/" target="_blank" rel="noopener">coinlaw.io</a></li>
+        <li>Daily News Egypt. (2025, November 17). <i>CBE's digital transformation push lifts financial inclusion to 76.3% in June 2025.</i> <a href="https://www.dailynewsegypt.com/2025/11/17/cbes-digital-transformation-push-lifts-financial-inclusion-to-76-3-in-june-2025/" target="_blank" rel="noopener">dailynewsegypt.com</a></li>
+        <li>Federal Deposit Insurance Corporation. (n.d.). <i>BankFind suite: Bank structure changes.</i> <a href="https://banks.data.fdic.gov/bankfind-suite/oscr/branch_office_closings" target="_blank" rel="noopener">fdic.gov</a></li>
+        <li>Mastercard. (2024, September). <i>Mastercard and National Bank of Egypt collaborate on AI-powered digital employees.</i> <a href="https://www.mastercard.com/news/eemea/en/newsroom/press-releases/en/2024/september/mastercard-and-national-bank-of-egypt-collaborate-on-ai-powered-digital-employees-for-enhanced-digital-banking-experience/" target="_blank" rel="noopener">mastercard.com</a></li>
+        <li>S&amp;P Global Market Intelligence. (2025, May). <i>Pace of US bank branch closures picks up in Q1 2025.</i> <a href="https://www.spglobal.com/market-intelligence/en/news-insights/articles/2025/5/pace-of-us-bank-branch-closures-picks-up-in-q1-2025-88699893" target="_blank" rel="noopener">spglobal.com</a></li>
+        <li>StockTitan. (n.d.). <i>National Bank of Egypt enhances enterprise security with MFA and SSO from BIO-key.</i> <a href="https://www.stocktitan.net/news/BKYI/" target="_blank" rel="noopener">stocktitan.net</a></li>
+        <li>U.S. Bureau of Labor Statistics. (n.d.). <i>Tellers: Occupational outlook handbook.</i> <a href="https://www.bls.gov/ooh/office-and-administrative-support/tellers.htm" target="_blank" rel="noopener">bls.gov</a></li>
+        <li>World Economic Forum. (2025, January). <i>The future of jobs report 2025.</i> <a href="https://www.weforum.org/publications/the-future-of-jobs-report-2025/" target="_blank" rel="noopener">weforum.org</a></li>
+        <li>Zawya. (2025). <i>Central Bank of Egypt's digital transformation push lifts financial inclusion to 76.3% in June 2025.</i> <a href="https://www.zawya.com/en/business/banking-and-insurance/central-bank-of-egypts-digital-transformation-push-lifts-financial-inclusion-to-763-in-june-2025-o9ytdkh8" target="_blank" rel="noopener">zawya.com</a></li>
+      </ol>
+    </section>
+
+    <!-- GLOSSARY -->
+    <section id="glossary">
+      <h2>Word list: plain meanings</h2>
+      <p class="muted">Every technical term used on this page, in one place, in everyday language.</p>
+      <dl class="gloss">
+        <dt>IT (information technology)</dt><dd>All the computers, software, phones, internet, and networks a business uses to store and move information.</dd>
+        <dt>Automation</dt><dd>Getting a machine or software to do a job a person used to do by hand.</dd>
+        <dt>ATM</dt><dd>The cash machine in the wall. Short for automated teller machine.</dd>
+        <dt>Bank teller</dt><dd>The staff member behind the counter who handles your cash, deposits, and withdrawals.</dd>
+        <dt>Branch</dt><dd>A local bank office you can walk into.</dd>
+        <dt>AI (artificial intelligence)</dt><dd>Software that can do tasks normally needing human thinking, like answering questions or spotting fraud.</dd>
+        <dt>Generative AI</dt><dd>A newer kind of AI that can write text and hold a conversation, like a smart assistant.</dd>
+        <dt>Chatbot</dt><dd>An automated chat program that answers questions by text instead of a human.</dd>
+        <dt>RPA (robotic process automation)</dt><dd>Software "robots" that copy repetitive computer tasks a person would do, such as retyping the same data.</dd>
+        <dt>Fintech</dt><dd>Short for financial technology: tech-driven money services such as payment apps and online lending.</dd>
+        <dt>Cybersecurity</dt><dd>Protecting computers and information from hackers and online attacks.</dd>
+        <dt>Back office</dt><dd>The behind-the-scenes part of a bank that processes paperwork; customers never see it.</dd>
+        <dt>Data scientist / data analyst</dt><dd>A person who studies large amounts of data to find useful patterns.</dd>
+        <dt>Cloud (cloud computing)</dt><dd>Renting computing power and storage over the internet instead of owning the machines.</dd>
+        <dt>Cloud engineer</dt><dd>A person who builds and runs systems on those rented internet computers.</dd>
+        <dt>Core banking system</dt><dd>The central computer system that runs all of a bank's accounts and transactions.</dd>
+        <dt>Real time</dt><dd>Happening instantly, as it occurs, with no waiting.</dd>
+        <dt>ERP (enterprise resource planning)</dt><dd>One big software system that runs a company's core operations, like finance.</dd>
+        <dt>HRMS</dt><dd>Software that manages employee records and payroll.</dd>
+        <dt>E-wallet / mobile wallet</dt><dd>Money stored on your phone that you can pay with directly.</dd>
+        <dt>Fawry</dt><dd>A popular Egyptian service for paying bills electronically.</dd>
+        <dt>Apple Pay</dt><dd>Paying for things by tapping your iPhone or Apple Watch.</dd>
+        <dt>MFA (multi-factor authentication)</dt><dd>Logging in with more than one proof of identity, such as a password plus a code on your phone.</dd>
+        <dt>SSO (single sign-on)</dt><dd>One login that opens access to many different systems.</dd>
+        <dt>Security Operations Centre (SOC)</dt><dd>A team and system that watches for and responds to cyber-attacks around the clock.</dd>
+        <dt>API</dt><dd>A safe "doorway" that lets two separate software systems share information and services.</dd>
+        <dt>Open banking</dt><dd>Letting customers securely connect their bank account to other approved apps, usually through APIs.</dd>
+        <dt>Zero-trust security</dt><dd>A security approach that trusts no one automatically and checks every access request.</dd>
+        <dt>Credit scoring</dt><dd>Judging how likely a person is to repay a loan.</dd>
+        <dt>Financial inclusion</dt><dd>Making sure ordinary and poorer people can use basic financial services like accounts and transfers.</dd>
+        <dt>The unbanked</dt><dd>People who do not have a bank account.</dd>
+        <dt>Microfinance</dt><dd>Small loans for people or tiny businesses who cannot get normal bank loans.</dd>
+        <dt>SME</dt><dd>A small or medium-sized enterprise, that is, a smaller company rather than a giant one.</dd>
+        <dt>InstaPay</dt><dd>An Egyptian service for sending money instantly between banks from your phone, any time.</dd>
+        <dt>Meeza</dt><dd>Egypt's own national payment card.</dd>
+        <dt>ESG / EESG</dt><dd>A way of judging how responsibly a company treats the economy, the environment, society, and how honestly it is run. NBE's version, EESG, adds "economic" to the usual ESG.</dd>
+        <dt>Blockchain</dt><dd>A shared digital record that is very hard to tamper with, used to track transactions securely.</dd>
+        <dt>Assets (total assets)</dt><dd>The full value of everything a bank holds and is owed; a common measure of its size.</dd>
+        <dt>Strategy</dt><dd>A company's overall game plan: what it is trying to achieve and how.</dd>
+        <dt>World Economic Forum (WEF)</dt><dd>An international organisation known for research on the global economy and jobs.</dd>
+        <dt>APA</dt><dd>A standard style universities use for listing the sources of information.</dd>
+      </dl>
+    </section>
+
+    <section id="method">
+      <h2>How we made this</h2>
+      <p>For anyone who wants to repeat or extend the work:</p>
+      <ul>
+        <li><b>Research:</b> we searched up-to-date sources online and tied every number to a named source (see All the Facts and Sources).</li>
+        <li><b>Charts:</b> drawn from those numbers using simple charting software.</li>
+        <li><b>The report:</b> a Word document with a cover, eight sections, tables, charts, and a sources list.</li>
+        <li><b>The slideshow:</b> a PowerPoint in the bank's green and gold colours, plus the clickable web version.</li>
+        <li><b>Checking:</b> the work was reviewed several times, independently, for both look and content, until two checks in a row found nothing to fix.</li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>EMBA, IT Strategy &middot; A reading and study hub for Ahmed Awad, Tariq Salama, and Ahmed Sabri. This is not the graded work. Prepared June 2026.</p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  var side=document.getElementById('side'), btn=document.getElementById('menuBtn');
+  btn.addEventListener('click',function(){side.classList.toggle('open')});
+  document.querySelectorAll('nav.toc a').forEach(function(a){
+    a.addEventListener('click',function(){if(window.innerWidth<=900)side.classList.remove('open')});
+  });
+  var links=Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var map={};links.forEach(function(a){var id=a.getAttribute('href').slice(1);var s=document.getElementById(id);if(s)map[id]=a;});
+  var sections=Object.keys(map).map(function(id){return document.getElementById(id)});
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(l){l.classList.remove('active')});
+        var a=map[e.target.id];if(a)a.classList.add('active');
+      }
+    });
+  },{rootMargin:'-15% 0px -75% 0px',threshold:0});
+  sections.forEach(function(s){obs.observe(s)});
+</script>
+</body>
+</html>
