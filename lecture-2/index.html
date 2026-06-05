@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Chapter 5: Data Resource Management - Group Study Portal | EMBA IT Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070f1c; --bg2:#0b1830; --panel:#0e2038; --panel2:#12294a;
+    --line:#1d3a5f; --line2:#2b4d76;
+    --ink:#eaf2ff; --muted:#9fb6d4; --faint:#6b87ab;
+    --blue:#3d8bff; --blue-soft:#6fa8ff; --cyan:#27e0d4; --cyan-soft:#7af0e8;
+    --amber:#f5b631; --amber-soft:#ffd472; --red:#ff6b6b; --green:#39d98a;
+    --display:'Fraunces',Georgia,serif;
+    --body:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --mono:'JetBrains Mono','SFMono-Regular',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.72;font-size:16.5px;-webkit-font-smoothing:antialiased}
+  a{color:var(--cyan-soft);text-decoration:none}a:hover{text-decoration:underline}
+  ::selection{background:var(--cyan);color:#04101f}
+  .backdrop{position:fixed;inset:0;z-index:-1;background:
+     radial-gradient(1100px 700px at 85% -5%, rgba(61,139,255,.16), transparent 60%),
+     radial-gradient(900px 600px at 0% 100%, rgba(39,224,212,.10), transparent 60%), var(--bg);}
+  .backdrop::before{content:"";position:absolute;inset:0;opacity:.5;
+    background-image:linear-gradient(rgba(61,139,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(61,139,255,.045) 1px,transparent 1px);
+    background-size:48px 48px;mask-image:radial-gradient(circle at 70% 10%,#000,transparent 75%)}
+
+  .wrap{display:grid;grid-template-columns:288px 1fr;max-width:1340px;margin:0 auto}
+  .side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--line);padding:24px 18px 50px;background:rgba(8,18,34,.6);backdrop-filter:blur(8px)}
+  .main{padding:0 clamp(22px,4.5vw,72px) 140px;min-width:0}
+
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+  .brand .lg{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:grid;place-items:center;color:#04101f;font-weight:700;font-size:20px;font-family:var(--display)}
+  .brand b{font-family:var(--display);font-size:17px;color:#fff;line-height:1.1}
+  .brand small{display:block;color:var(--faint);font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
+  nav.toc{margin-top:22px}
+  nav.toc a{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13.5px;padding:7px 11px;border-radius:9px;border-left:2px solid transparent;transition:.15s}
+  nav.toc a:hover{color:var(--ink);background:var(--panel);text-decoration:none}
+  nav.toc a.active{color:var(--cyan-soft);background:var(--panel);border-left-color:var(--amber)}
+  nav.toc a .n{font-family:var(--mono);font-size:10.5px;color:var(--faint);min-width:18px}
+  nav.toc a.active .n{color:var(--amber)}
+  nav.toc .grp{color:var(--faint);font-size:10px;font-family:var(--mono);letter-spacing:1.8px;text-transform:uppercase;margin:18px 0 6px 11px}
+  .side .cta{margin-top:22px;display:flex;flex-direction:column;gap:9px}
+  .side .cta a{display:flex;align-items:center;gap:9px;justify-content:center;font-family:var(--mono);font-size:12.5px;padding:11px;border-radius:10px;border:1px solid var(--line2);color:var(--ink);transition:.2s}
+  .side .cta a.primary{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101f;font-weight:700;border-color:transparent}
+  .side .cta a:hover{text-decoration:none;transform:translateY(-2px)}
+
+  .hero{padding:62px 0 34px;border-bottom:1px solid var(--line)}
+  .tag{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan-soft);border:1px solid var(--line2);border-radius:999px;padding:6px 15px;margin-bottom:22px}
+  .tag .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+  .hero h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,5.4vw,62px);line-height:1.04;letter-spacing:-.02em;color:#fff;margin-bottom:16px}
+  .hero h1 .grad{background:linear-gradient(120deg,#fff,var(--cyan-soft) 70%,var(--blue-soft));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero p.lead{font-size:clamp(16px,1.6vw,20px);color:var(--muted);max-width:66ch}
+  .metarow{display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:26px;font-size:14px}
+  .metarow b{color:var(--amber-soft);font-weight:600}.metarow span{color:var(--muted)}
+  .howto{margin-top:24px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:10px;padding:13px 17px;font-size:14.5px;color:var(--muted)}
+  .howto b{color:var(--cyan-soft)}
+
+  section{padding:46px 0;border-bottom:1px solid var(--line);scroll-margin-top:14px}
+  .kicker{font-family:var(--mono);color:var(--amber);font-size:11.5px;letter-spacing:2.5px;text-transform:uppercase;font-weight:500;margin-bottom:9px}
+  section>h2{font-family:var(--display);font-weight:600;font-size:clamp(25px,3.2vw,38px);color:#fff;margin-bottom:12px;letter-spacing:-.01em}
+  section>h2 .em{color:var(--amber);font-style:italic}
+  h3{font-family:var(--display);font-size:21px;color:var(--cyan-soft);margin:28px 0 8px}
+  p{margin:12px 0;color:var(--ink)}
+  .muted{color:var(--muted)}
+  ul,ol{margin:10px 0 12px 22px}li{margin:7px 0;color:var(--ink)}
+  ul li::marker{color:var(--blue)}
+  strong{color:#fff}
+
+  .define{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line2);border-left:4px solid var(--amber);border-radius:11px;padding:14px 18px;margin:16px 0;font-size:15px}
+  .define b{color:var(--amber-soft)}.define .term{color:var(--cyan-soft);font-weight:600}
+  .analogy{background:rgba(39,224,212,.06);border:1px solid rgba(39,224,212,.22);border-radius:11px;padding:13px 18px;margin:16px 0;font-size:14.8px;color:var(--muted)}
+  .analogy b{color:var(--cyan-soft)}
+
+  .grid{display:grid;gap:16px;margin:18px 0}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:14px;padding:18px 20px;transition:.2s}
+  .card:hover{border-color:var(--line2);transform:translateY(-3px)}
+  .card .ic{font-size:24px;margin-bottom:8px}
+  .card h4{font-family:var(--display);font-size:18px;color:#fff;margin-bottom:5px}
+  .card p{color:var(--muted);font-size:14px;margin:0}
+
+  .widget{margin:22px 0;background:rgba(8,18,34,.5);border:1px solid var(--line);border-radius:16px;padding:clamp(16px,2vw,24px)}
+  .widget .wlabel{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .widget .wlabel::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+
+  .btn{font-family:var(--mono);font-size:13px;padding:10px 17px;border-radius:10px;cursor:pointer;border:1px solid var(--line2);background:var(--panel);color:var(--ink);transition:.2s}
+  .btn.run{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101f;font-weight:700;border-color:transparent}
+  .btn:hover{transform:translateY(-2px)}
+
+  table.eval{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:14.5px;margin-top:8px}
+  table.eval th{font-family:var(--mono);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--cyan-soft);text-align:left;padding:0 14px 6px}
+  table.eval td{background:var(--panel);padding:13px 14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  table.eval td:first-child{border-left:3px solid var(--blue);border-radius:10px 0 0 10px;font-weight:600;font-family:var(--display);color:#fff;font-size:15px}
+  table.eval td:last-child{border-radius:0 10px 10px 0}
+  table.eval tr.relational td:first-child{border-left-color:var(--green)}
+  .good{color:var(--green)}.bad{color:var(--red)}
+
+  /* ladder */
+  .ladder{display:flex;gap:12px;flex-wrap:wrap}
+  .rung{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;cursor:pointer;transition:.25s;position:relative}
+  .rung:hover,.rung.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan)}
+  .rung .lvl{font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;color:var(--cyan-soft)}
+  .rung .ic{font-size:26px;margin:6px 0}
+  .rung h4{font-family:var(--display);font-size:17px;color:#fff;margin-bottom:4px}
+  .rung p{font-size:12.5px;color:var(--muted);margin:0}
+  .rung .ex{margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--amber-soft);background:rgba(245,182,49,.08);border:1px solid rgba(245,182,49,.2);border-radius:7px;padding:6px 8px}
+
+  /* file vs db */
+  .switchrow{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .toggle{position:relative;width:230px;height:42px;border-radius:11px;border:1px solid var(--line2);background:var(--panel);display:flex;cursor:pointer;font-family:var(--mono);font-size:12.5px;overflow:hidden}
+  .toggle span{flex:1;display:grid;place-items:center;z-index:2;transition:.25s;color:var(--muted)}
+  .toggle .knob{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:36px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--cyan));transition:.3s cubic-bezier(.2,.7,.2,1)}
+  .toggle.db .knob{left:50%}
+  .toggle.db .s-db,.toggle:not(.db) .s-file{color:#04101f;font-weight:700}
+  .fvd{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panelbox{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px;min-height:210px}
+  .panelbox h4{font-family:var(--display);font-size:16px;color:#fff;margin-bottom:10px}
+  .filebox{border:1px dashed var(--line2);border-radius:9px;padding:8px 10px;margin:7px 0;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .filebox .tag2{color:var(--blue-soft)}.dup{color:var(--red);font-weight:700}
+  .central{border:1px solid var(--cyan);border-radius:9px;padding:11px;font-family:var(--mono);font-size:12px;background:rgba(39,224,212,.06);color:var(--cyan-soft);text-align:center}
+  .arrows{display:flex;justify-content:space-around;color:var(--faint);font-size:15px;margin:6px 0}
+
+  /* structure explorer */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .tab{font-family:var(--mono);font-size:12px;padding:8px 13px;border-radius:9px;border:1px solid var(--line2);background:var(--panel);color:var(--muted);cursor:pointer;transition:.2s}
+  .tab:hover{color:var(--ink);border-color:var(--blue)}
+  .tab.on{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101f;font-weight:700;border-color:transparent}
+  .explorer{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:center}
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:14px;min-height:300px;display:grid;place-items:center;padding:16px}
+  .stage svg{width:100%;height:auto;max-height:290px}
+  .exinfo h3{margin-top:0}.exinfo .use{font-family:var(--mono);font-size:12px;color:var(--cyan-soft)}
+  .node{fill:var(--panel2);stroke:var(--blue);stroke-width:2}.node.amber{stroke:var(--amber)}
+  .ntext{fill:var(--ink);font-family:var(--mono);font-size:12px;text-anchor:middle}
+  .edge{stroke:var(--line2);stroke-width:2;fill:none}
+  .edge.live{stroke:var(--cyan);stroke-dasharray:6 5;animation:dash 1s linear infinite}
+  @keyframes dash{to{stroke-dashoffset:-22}}
+
+  /* sql */
+  .sqlwrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .editorbox{background:#04101f;border:1px solid var(--line2);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+  .editorbar{display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid var(--line);background:var(--bg2)}
+  .editorbar .b{width:10px;height:10px;border-radius:50%}.editorbar .r{background:#ff5f57}.editorbar .y{background:#febc2e}.editorbar .g{background:#28c840}
+  .editorbar .ttl{margin-left:6px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  textarea#sqlbox{width:100%;background:transparent;border:0;color:#dff1ff;font-family:var(--mono);font-size:14px;line-height:1.65;padding:13px 14px;resize:vertical;outline:none;min-height:130px}
+  .sqlbtns{display:flex;gap:9px;margin-top:11px;flex-wrap:wrap}
+  .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+  .chip{font-family:var(--mono);font-size:11px;padding:6px 10px;border-radius:999px;border:1px solid var(--line2);color:var(--amber-soft);background:rgba(245,182,49,.06);cursor:pointer;transition:.2s}
+  .chip:hover{border-color:var(--amber);color:#fff}
+  .resultbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:auto;padding:4px;max-height:360px}
+  .resultbox table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
+  .resultbox th{position:sticky;top:0;background:var(--panel2);color:var(--cyan-soft);text-align:left;padding:9px 11px;border-bottom:1px solid var(--line2)}
+  .resultbox td{padding:7px 11px;border-bottom:1px solid var(--line);color:var(--ink)}
+  .resultbox tr:hover td{background:rgba(61,139,255,.07)}
+  .resmeta{font-family:var(--mono);font-size:11.5px;color:var(--faint);padding:9px 11px}
+  .err{color:var(--red);font-family:var(--mono);font-size:12.5px;padding:11px}
+
+  /* etl */
+  .etl{display:flex;align-items:stretch;flex-wrap:wrap}
+  .etlstage{flex:1;min-width:140px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:15px;text-align:center;transition:.35s}
+  .etlstage.lit{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan)}
+  .etlstage .ic{font-size:26px;margin-bottom:6px}.etlstage h4{font-family:var(--display);font-size:16px;color:#fff;margin-bottom:4px}.etlstage p{font-size:12px;color:var(--muted);margin:0}
+  .etlarrow{display:grid;place-items:center;padding:0 5px;color:var(--faint);font-size:20px}
+
+  /* olap */
+  .olap{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+  .scene{perspective:850px;display:grid;place-items:center;height:300px}
+  .cube{position:relative;width:180px;height:180px;transform-style:preserve-3d;transform:rotateX(-22deg) rotateY(-32deg)}
+  .face{position:absolute;width:180px;height:180px;border:1.5px solid var(--cyan);display:grid;place-items:center;font-family:var(--mono);font-size:13px;color:var(--cyan-soft);background:rgba(39,224,212,.08);text-align:center}
+  .face.lit{background:rgba(245,182,49,.22);border-color:var(--amber);color:var(--amber-soft)}
+  .f-front{transform:translateZ(90px)}.f-back{transform:rotateY(180deg) translateZ(90px)}.f-right{transform:rotateY(90deg) translateZ(90px)}.f-left{transform:rotateY(-90deg) translateZ(90px)}.f-top{transform:rotateX(90deg) translateZ(90px)}.f-bottom{transform:rotateX(-90deg) translateZ(90px)}
+
+  /* basket */
+  .basket{display:grid;grid-template-columns:.8fr 1.2fr;gap:22px;align-items:center}
+  .prods{display:flex;flex-direction:column;gap:9px}
+  .prod{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--panel);cursor:pointer;transition:.2s;font-size:15px}
+  .prod .e{font-size:22px}.prod:hover{border-color:var(--blue);transform:translateX(4px)}
+  .prod.sel{border-color:var(--amber);background:rgba(245,182,49,.1);color:#fff}
+  .assoc h4{font-family:var(--mono);font-size:12.5px;color:var(--cyan-soft);margin-bottom:12px}
+  .bar{margin:10px 0}.bar .lab{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}.bar .lab b{color:var(--amber-soft);font-family:var(--mono)}
+  .bar .track{height:12px;background:var(--panel);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+  .bar .fillbar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .8s cubic-bezier(.2,.7,.2,1)}
+
+  .topbtn{position:fixed;bottom:22px;right:22px;width:46px;height:46px;border-radius:50%;border:1px solid var(--line2);background:var(--panel2);color:var(--ink);cursor:pointer;font-size:20px;display:none;place-items:center;z-index:30}
+  .topbtn.show{display:grid}
+  .footer{padding:40px 0 0;color:var(--faint);font-size:13.5px}
+  .footer b{color:var(--muted)}
+
+  @media (max-width:980px){
+    .wrap{grid-template-columns:1fr}.side{display:none}
+    .g3,.g4{grid-template-columns:1fr 1fr}
+    .explorer,.sqlwrap,.olap,.basket,.fvd{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"></div>
+<div class="wrap">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand"><span class="lg">5</span><div><b>Chapter 5</b><small>Data Resource Mgmt</small></div></div>
+    <nav class="toc" id="toc">
+      <div class="grp">Foundations</div>
+      <a href="#intro"><span class="n">00</span> Start here</a>
+      <a href="#why"><span class="n">01</span> Why manage data</a>
+      <a href="#hierarchy"><span class="n">02</span> Data hierarchy</a>
+      <div class="grp">Approaches</div>
+      <a href="#approaches"><span class="n">03</span> File vs database</a>
+      <a href="#dbms"><span class="n">04</span> The DBMS</a>
+      <div class="grp">Structures</div>
+      <a href="#structures"><span class="n">05</span> Structure explorer</a>
+      <a href="#evaluate"><span class="n">06</span> Comparison</a>
+      <a href="#development"><span class="n">07</span> Development</a>
+      <div class="grp">Types & analytics</div>
+      <a href="#types"><span class="n">08</span> Types of databases</a>
+      <a href="#warehouse"><span class="n">09</span> Warehouse & ETL</a>
+      <a href="#olap"><span class="n">10</span> OLAP cube</a>
+      <a href="#mining"><span class="n">11</span> Data mining</a>
+      <a href="#sql"><span class="n">12</span> SQL playground</a>
+      <div class="grp">Wrap up</div>
+      <a href="#case"><span class="n">13</span> Real-world case</a>
+      <a href="#takeaways"><span class="n">14</span> Takeaways</a>
+      <a href="#glossary"><span class="n">15</span> Glossary</a>
+    </nav>
+    <div class="cta">
+      <a class="primary" href="presentation.html">&#9654; Open the presentation</a>
+      <a href="../downloads/Lecture2_Ch5_Data_Resource_Management.pptx">&#11015; Download the deck (.pptx)</a>
+      <a href="../downloads/Lecture2_Ch5_Data_Resource_Management.pdf">&#11015; Download the deck (.pdf)</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="hero" id="intro">
+      <div class="tag"><span class="dot"></span> EMBA IT STRATEGY &middot; GROUP STUDY PORTAL</div>
+      <h1>Data Resource <span class="grad">Management</span>,<br>explained simply.</h1>
+      <p class="lead">Everything in Chapter 5, written for someone who has never touched a database. Read the plain-English explanations, then play with the live demos to make each idea stick. This is our group's study and revision hub.</p>
+      <div class="metarow">
+        <span><b>Group:</b> Ahmed Awad &middot; Tariq Salama &middot; Ahmed Sabri &middot; Mahmoud El-Serwy</span>
+        <span><b>Instructor:</b> Dr. Ghada</span><span><b>Submission:</b> 10-06-2026</span>
+      </div>
+      <div class="howto"><b>How to use this page:</b> scroll top to bottom for the full story, or jump to any topic from the menu on the left. Anything you can click, drag, or type into is a learning toy, try it.</div>
+    </header>
+
+    <!-- WHY -->
+    <section id="why">
+      <div class="kicker">01 / Foundations</div>
+      <h2>Why bother <span class="em">managing</span> data?</h2>
+      <p>Every business runs on data: customer names, prices, orders, salaries. <strong>Data Resource Management (DRM)</strong> is simply the practice of treating that data as a valuable company asset, on purpose, instead of letting it pile up randomly in spreadsheets and files.</p>
+      <div class="define"><b>In one line:</b> <span class="term">Data Resource Management</span> is a managerial activity that uses technology (databases, data warehousing) to keep a company's data accurate, organized, and useful for the people who need it.</div>
+      <div class="analogy"><b>Analogy:</b> think of data like money. If you throw cash in random drawers around the house, you lose track of it. A bank (the database) keeps it in one safe place, organized, with rules about who can touch it. DRM is running your data like a well-managed bank.</div>
+      <div class="grid g4">
+        <div class="card"><div class="ic">&#128142;</div><h4>Data is an asset</h4><p>Well-managed data becomes a competitive advantage, not clutter.</p></div>
+        <div class="card"><div class="ic">&#128202;</div><h4>Better decisions</h4><p>Clean, joined-up data powers reports and analytics.</p></div>
+        <div class="card"><div class="ic">&#129518;</div><h4>One version of truth</h4><p>Everyone sees the same correct numbers.</p></div>
+        <div class="card"><div class="ic">&#128737;</div><h4>Control &amp; trust</h4><p>Better security, privacy, and compliance.</p></div>
+      </div>
+    </section>
+
+    <!-- HIERARCHY -->
+    <section id="hierarchy">
+      <div class="kicker">02 / Foundations</div>
+      <h2>The logical <span class="em">data hierarchy</span></h2>
+      <p>Data is built up in layers, from the tiniest piece to the whole database. Understanding these five words is the foundation of the entire chapter.</p>
+      <div class="define"><b>The five levels:</b> a <span class="term">character</span> is one symbol &rarr; a <span class="term">field</span> is one fact &rarr; a <span class="term">record</span> is one thing fully described &rarr; a <span class="term">file/table</span> is many records of the same kind &rarr; a <span class="term">database</span> ties related files together.</div>
+      <div class="analogy"><b>Analogy:</b> letters spell a word (field), words fill an ID card (record), a stack of ID cards is a class list (file), and all the school's lists together are the school database.</div>
+      <div class="widget">
+        <div class="wlabel">Interactive &middot; click a card</div>
+        <div class="ladder" id="ladder">
+          <div class="rung" data-i="0"><div class="lvl">LEVEL 1</div><div class="ic">&#127991;</div><h4>Character</h4><p>A single letter, digit, or symbol.</p><div class="ex">A &nbsp; 7 &nbsp; %</div></div>
+          <div class="rung" data-i="1"><div class="lvl">LEVEL 2</div><div class="ic">&#128203;</div><h4>Field</h4><p>One attribute of something.</p><div class="ex">salary = 8500</div></div>
+          <div class="rung" data-i="2"><div class="lvl">LEVEL 3</div><div class="ic">&#128196;</div><h4>Record</h4><p>All fields for one entity.</p><div class="ex">name, SSN, pay rate</div></div>
+          <div class="rung" data-i="3"><div class="lvl">LEVEL 4</div><div class="ic">&#128209;</div><h4>File / Table</h4><p>Many related records.</p><div class="ex">the payroll table</div></div>
+          <div class="rung" data-i="4"><div class="lvl">LEVEL 5</div><div class="ic">&#128451;</div><h4>Database</h4><p>Integrated related data.</p><div class="ex">the HR database</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- APPROACHES -->
+    <section id="approaches">
+      <div class="kicker">03 / Approaches</div>
+      <h2>File processing <span class="em">vs</span> the database approach</h2>
+      <p>Before databases, every program kept its own private files. That sounds harmless, but it quietly causes four big problems. Flip the switch below to see the difference.</p>
+      <div class="define"><b>Old way (file processing):</b> each app has its own files. <b>Modern way (database approach):</b> all apps share one database through a <span class="term">DBMS</span>.</div>
+      <div class="widget">
+        <div class="wlabel">Interactive &middot; flip the switch</div>
+        <div class="switchrow">
+          <div class="toggle" id="fvdToggle" onclick="toggleFvd()"><span class="s-file">File processing</span><span class="s-db">Database</span><div class="knob"></div></div>
+          <div class="muted" id="fvdNote" style="font-size:14px"><b style="color:var(--amber-soft)">File processing:</b> the same customer is stored three times (in red).</div>
+        </div>
+        <div class="fvd">
+          <div class="panelbox" id="fvdLeft"></div>
+          <div class="panelbox"><h4 id="fvdRightTitle">&#9888; Problems</h4><div id="fvdRight"></div></div>
+        </div>
+      </div>
+      <div class="analogy"><b>Why it matters:</b> if the customer changes their phone number, file processing forces you to update it in three places, and you will forget one. A shared database stores it once, so it is always right.</div>
+    </section>
+
+    <!-- DBMS -->
+    <section id="dbms">
+      <div class="kicker">04 / Approaches</div>
+      <h2>The <span class="em">DBMS</span>: the engine in the middle</h2>
+      <p>You never talk to a database directly. You talk to a <strong>Database Management System (DBMS)</strong>, the software that sits between people (and apps) and the stored data.</p>
+      <div class="define"><b><span class="term">DBMS</span></b> = Database Management System. The software interface that creates databases, keeps the data clean, and answers requests for information. Examples you may know: Oracle, MySQL, Microsoft SQL Server, PostgreSQL.</div>
+      <div class="grid g4">
+        <div class="card"><div class="ic">&#9881;</div><h4>Development</h4><p>Define the structure of the data (the schema).</p></div>
+        <div class="card"><div class="ic">&#128196;</div><h4>App development</h4><p>Build forms, reports, and web pages on the data.</p></div>
+        <div class="card"><div class="ic">&#128269;</div><h4>Interrogation</h4><p>Let users query the data and get answers (see the SQL demo).</p></div>
+        <div class="card"><div class="ic">&#128260;</div><h4>Maintenance</h4><p>Add, update, and correct data as the business changes.</p></div>
+      </div>
+    </section>
+
+    <!-- STRUCTURES -->
+    <section id="structures">
+      <div class="kicker">05 / Structures</div>
+      <h2>How data can be <span class="em">structured</span></h2>
+      <p>There are five classic ways to organize and link records. The differences come down to how records connect to each other. Click each one to see its shape.</p>
+      <div class="widget">
+        <div class="wlabel">Interactive &middot; click a structure</div>
+        <div class="tabs" id="structTabs"></div>
+        <div class="explorer">
+          <div class="stage" id="structStage"></div>
+          <div class="exinfo" id="structInfo"></div>
+        </div>
+      </div>
+      <div class="define"><b>Bottom line:</b> the <span class="term">relational</span> model (data in linked tables) won the market because it is flexible and easy to query. The <span class="term">multidimensional</span> model (cubes) is used for fast analytics. See both in action further down.</div>
+    </section>
+
+    <!-- EVALUATE -->
+    <section id="evaluate">
+      <div class="kicker">06 / Structures</div>
+      <h2>Comparing the <span class="em">structures</span></h2>
+      <p>No structure is best at everything. Here is the trade-off, in plain terms.</p>
+      <table class="eval">
+        <thead><tr><th>Structure</th><th>Good at</th><th>Weak at</th></tr></thead>
+        <tbody>
+          <tr><td>Hierarchical</td><td><span class="good">&#43;</span> Fast for fixed, routine transactions</td><td><span class="bad">&minus;</span> Cannot do many-to-many links</td></tr>
+          <tr><td>Network</td><td><span class="good">&#43;</span> More flexible than hierarchical</td><td><span class="bad">&minus;</span> Poor at ad hoc questions</td></tr>
+          <tr class="relational"><td>Relational</td><td><span class="good">&#43;</span> Easy questions, easy to maintain</td><td><span class="bad">&minus;</span> A bit slower than the older models</td></tr>
+          <tr><td>Multidimensional</td><td><span class="good">&#43;</span> Superb for OLAP analytics</td><td><span class="bad">&minus;</span> Built for analysis, not transactions</td></tr>
+          <tr><td>Object-Oriented</td><td><span class="good">&#43;</span> Handles images, audio, video</td><td><span class="bad">&minus;</span> More complex to design</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- DEVELOPMENT -->
+    <section id="development">
+      <div class="kicker">07 / Structures</div>
+      <h2>Building and <span class="em">governing</span> a database</h2>
+      <p>Databases do not appear by accident. People design them, document them, and protect them.</p>
+      <div class="grid g4">
+        <div class="card"><div class="ic">&#128104;&#8205;&#128188;</div><h4>DBA</h4><p>The Database Administrator owns the database and guards its integrity and security.</p></div>
+        <div class="card"><div class="ic">&#9881;</div><h4>DDL</h4><p>Data Definition Language: the commands used to define the structure (the schema).</p></div>
+        <div class="card"><div class="ic">&#128214;</div><h4>Data dictionary</h4><p>"Data about the data" (metadata): definitions, rules, who can access what.</p></div>
+        <div class="card"><div class="ic">&#128376;</div><h4>ER diagram</h4><p>A map of the entities and how they relate, drawn before building.</p></div>
+      </div>
+      <div class="define"><b>Two views of the same data:</b> the <span class="term">logical view</span> is how a user sees it (a tidy table). The <span class="term">physical view</span> is how it is really stored on disk. The DBMS translates between them, so users never worry about the hardware.</div>
+    </section>
+
+    <!-- TYPES -->
+    <section id="types">
+      <div class="kicker">08 / Types & analytics</div>
+      <h2>Types of <span class="em">databases</span></h2>
+      <p>Different jobs need different databases. These are the main families.</p>
+      <div class="grid g3">
+        <div class="card"><div class="ic">&#128190;</div><h4>Operational</h4><p>The live data that runs daily work: customers, inventory, HR. Also called transaction or production databases.</p></div>
+        <div class="card"><div class="ic">&#127760;</div><h4>Distributed</h4><p>Copies or parts of a database kept on servers in several locations for speed and safety.</p></div>
+        <div class="card"><div class="ic">&#128279;</div><h4>External</h4><p>Data you access from outside, often paid: web services, search engines, statistics providers.</p></div>
+        <div class="card"><div class="ic">&#127916;</div><h4>Hypermedia</h4><p>Linked pages of multimedia (the web itself) rather than rows of records.</p></div>
+        <div class="card"><div class="ic">&#127981;</div><h4>Data warehouse</h4><p>Cleaned, historical data gathered for analysis and decisions (covered next).</p></div>
+        <div class="card"><div class="ic">&#128202;</div><h4>Data mart</h4><p>A smaller slice of a warehouse focused on one department or process.</p></div>
+      </div>
+      <div class="define"><b>Distributed: two ways to stay in sync.</b> <span class="term">Replication</span> finds and copies every change to all sites (current but complex). <span class="term">Duplication</span> copies one master after hours (simple but the copies lag).</div>
+    </section>
+
+    <!-- WAREHOUSE -->
+    <section id="warehouse">
+      <div class="kicker">09 / Types & analytics</div>
+      <h2>The data <span class="em">warehouse</span> &amp; the ETL pipeline</h2>
+      <p>A <strong>data warehouse</strong> is a big, clean store of historical data pulled together from many systems, kept specifically for analysis. Getting data into it is called the <strong>ETL</strong> pipeline.</p>
+      <div class="define"><b><span class="term">ETL</span></b> = Extract, Transform, Load. Pull data from the sources, clean and standardize it, then load it into the warehouse. Press the button to watch it flow.</div>
+      <div class="widget">
+        <div class="wlabel">Interactive &middot; run the pipeline</div>
+        <div class="etl" id="etl">
+          <div class="etlstage" data-s="0"><div class="ic">&#128190;</div><h4>Sources</h4><p>Raw, live data from many systems.</p></div>
+          <div class="etlarrow">&#10142;</div>
+          <div class="etlstage" data-s="1"><div class="ic">&#9881;</div><h4>Extract &amp; clean</h4><p>Pulled, scrubbed, standardized.</p></div>
+          <div class="etlarrow">&#10142;</div>
+          <div class="etlstage" data-s="2"><div class="ic">&#127981;</div><h4>Warehouse</h4><p>One consistent historical store.</p></div>
+          <div class="etlarrow">&#10142;</div>
+          <div class="etlstage" data-s="3"><div class="ic">&#128202;</div><h4>Analyze</h4><p>Mining, OLAP, reports.</p></div>
+        </div>
+        <div style="margin-top:16px"><button class="btn run" onclick="runETL()">&#9654; Run pipeline</button></div>
+      </div>
+      <div class="analogy"><b>Real example:</b> Applebee's studies daily sales to decide what to reorder; Travelocity mined 600,000 customer comments to respond to problems faster.</div>
+    </section>
+
+    <!-- OLAP -->
+    <section id="olap">
+      <div class="kicker">10 / Types & analytics</div>
+      <h2>The <span class="em">OLAP</span> cube</h2>
+      <p>A multidimensional database lets managers look at numbers from several angles at once, like a cube. Each side is a <strong>dimension</strong> (Product, Region, Time) and each cell holds a number (like sales).</p>
+      <div class="define"><b><span class="term">OLAP</span></b> = Online Analytical Processing. "Slicing and dicing" means picking one side of the cube to get a simpler view, with no new query written from scratch.</div>
+      <div class="widget">
+        <div class="wlabel">Interactive &middot; drag to rotate, click to slice</div>
+        <div class="olap">
+          <div class="scene"><div class="cube" id="cube">
+            <div class="face f-front">PRODUCT<br>&#215;<br>REGION</div>
+            <div class="face f-back">measure:<br>SALES</div>
+            <div class="face f-right">TIME &#8595;</div>
+            <div class="face f-left">REGION &#8595;</div>
+            <div class="face f-top">PRODUCT &#8594;</div>
+            <div class="face f-bottom">total</div>
+          </div></div>
+          <div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn" onclick="sliceCube('product')">Slice by Product</button>
+              <button class="btn" onclick="sliceCube('region')">Slice by Region</button>
+              <button class="btn" onclick="sliceCube('time')">Slice by Time</button>
+              <button class="btn" onclick="spinCube()">&#8635; Spin</button>
+            </div>
+            <p class="muted" id="olapNote" style="margin-top:14px"><b style="color:var(--amber-soft)">Tip:</b> slicing by Time = Q1 turns the 3D cube into a flat Product-by-Region table for that quarter.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MINING -->
+    <section id="mining">
+      <div class="kicker">11 / Types & analytics</div>
+      <h2>Data <span class="em">mining</span></h2>
+      <p><strong>Data mining</strong> digs through the warehouse to find hidden patterns that help the business decide. A classic example is <strong>market-basket analysis</strong>: what do people buy together?</p>
+      <div class="widget">
+        <div class="wlabel">Interactive &middot; pick a product</div>
+        <div class="basket">
+          <div class="prods" id="prods">
+            <div class="prod sel" data-k="bread"><span class="e">&#127838;</span> Bread</div>
+            <div class="prod" data-k="coffee"><span class="e">&#9749;</span> Coffee</div>
+            <div class="prod" data-k="pasta"><span class="e">&#127837;</span> Pasta</div>
+            <div class="prod" data-k="diapers"><span class="e">&#129752;</span> Diapers</div>
+          </div>
+          <div class="assoc"><h4 id="assocTitle"># Customers who buy Bread also buy...</h4><div id="assocBars"></div></div>
+        </div>
+      </div>
+      <div class="analogy"><b>Famous finding:</b> a retailer's mining once revealed that buyers of diapers often grabbed beer on the same trip, so the stores placed them nearby. Patterns you would never guess, found in the data.</div>
+    </section>
+
+    <!-- SQL -->
+    <section id="sql">
+      <div class="kicker">12 / Types & analytics</div>
+      <h2>Talking to data with <span class="em">SQL</span></h2>
+      <p><strong>Interrogation</strong> just means asking the database questions. The standard language for relational databases is <strong>SQL</strong>. The pattern is always the same three words.</p>
+      <div class="define"><b>The shape of every query:</b> <span class="term">SELECT</span> which columns &middot; <span class="term">FROM</span> which table &middot; <span class="term">WHERE</span> which condition. Try it for real below, edit the query and run it.</div>
+      <div class="widget">
+        <div class="wlabel">Interactive &middot; runs in your browser</div>
+        <div class="sqlwrap">
+          <div>
+            <div class="editorbox">
+              <div class="editorbar"><span class="b r"></span><span class="b y"></span><span class="b g"></span><span class="ttl">query &middot; employees</span></div>
+              <textarea id="sqlbox" spellcheck="false">SELECT name, dept, salary
+FROM employees
+WHERE salary > 7000
+ORDER BY salary DESC</textarea>
+            </div>
+            <div class="sqlbtns"><button class="btn run" onclick="runSQL()">&#9654; Run query</button><button class="btn" onclick="showSchema()">View whole table</button></div>
+            <div class="chips" id="sqlChips"></div>
+          </div>
+          <div class="resultbox" id="sqlResult"><div class="resmeta">Press <b>Run query</b> to see results.</div></div>
+        </div>
+      </div>
+      <p class="muted" style="font-size:14px"><b style="color:var(--cyan-soft)">Also worth knowing:</b> <b>Boolean logic</b> (AND, OR, NOT) refines a search, and modern tools offer point-and-click or natural-language queries that get translated into SQL for you.</p>
+    </section>
+
+    <!-- CASE -->
+    <section id="case">
+      <div class="kicker">13 / Wrap up</div>
+      <h2>Real-world case: opening the <span class="em">data vault</span></h2>
+      <p>When data is treated as a managed resource, it can become a product in itself. Three giants opened parts of their databases to outside developers.</p>
+      <div class="grid g3">
+        <div class="card"><div class="ic">&#128722;</div><h4>Amazon</h4><p>~10 years and $1bn to build its data vault. Opened in 2002; 65,000+ developers and businesses tapped in, many became partners.</p></div>
+        <div class="card"><div class="ic">&#127760;</div><h4>eBay</h4><p>Opened its $3bn databases in 2003. 15,000+ developers registered, 1,000+ apps appeared, 41% of listings uploaded via them.</p></div>
+        <div class="card"><div class="ic">&#128269;</div><h4>Google</h4><p>Cautious: 1,000 free search results a day, more by permission. Opened AdWords to outside apps in 2005.</p></div>
+      </div>
+      <div class="analogy"><b>Discussion question:</b> should every company open its databases to outsiders? Weigh the new revenue and innovation against the risk of losing control of a core asset.</div>
+    </section>
+
+    <!-- TAKEAWAYS -->
+    <section id="takeaways">
+      <div class="kicker">14 / Wrap up</div>
+      <h2>Key <span class="em">takeaways</span></h2>
+      <div class="grid g2">
+        <div class="card"><h4>1. Manage data as a resource</h4><p class="muted">Treat data as a strategic asset that serves the whole business.</p></div>
+        <div class="card"><h4>2. Database beats file processing</h4><p class="muted">Sharing one database removes redundancy and adds integration, independence, and integrity.</p></div>
+        <div class="card"><h4>3. Relational is the default</h4><p class="muted">Linked tables are the standard; cubes (multidimensional) power analytics.</p></div>
+        <div class="card"><h4>4. Warehouse, then mine</h4><p class="muted">Clean historical data feeds mining, OLAP, and decision support.</p></div>
+        <div class="card"><h4>5. The DBMS is the engine</h4><p class="muted">It develops, maintains, and interrogates databases; SQL is the query standard.</p></div>
+        <div class="card"><h4>6. Govern the data</h4><p class="muted">DBAs, data dictionaries, and security keep data accurate and safe.</p></div>
+      </div>
+    </section>
+
+    <!-- GLOSSARY -->
+    <section id="glossary">
+      <div class="kicker">15 / Wrap up</div>
+      <h2>Quick <span class="em">glossary</span></h2>
+      <div class="grid g2">
+        <div class="card"><h4>DBMS</h4><p class="muted">Software between users and the database. Creates, maintains, and queries data.</p></div>
+        <div class="card"><h4>Schema</h4><p class="muted">The defined structure of a database: its tables, fields, and relationships.</p></div>
+        <div class="card"><h4>Field / Record / Table</h4><p class="muted">A fact / one entity fully described / many records of the same kind.</p></div>
+        <div class="card"><h4>Primary &amp; foreign key</h4><p class="muted">The unique ID of a row, and the field that links one table to another.</p></div>
+        <div class="card"><h4>Metadata</h4><p class="muted">Data about data: definitions, rules, and access info in the data dictionary.</p></div>
+        <div class="card"><h4>Data warehouse / mart</h4><p class="muted">A clean historical store for analysis / a focused subset of it.</p></div>
+        <div class="card"><h4>OLAP</h4><p class="muted">Online Analytical Processing: fast slice-and-dice analytics on a cube.</p></div>
+        <div class="card"><h4>Data mining</h4><p class="muted">Finding hidden patterns and relationships in large data pools.</p></div>
+        <div class="card"><h4>SQL</h4><p class="muted">Structured Query Language: the standard way to query relational data.</p></div>
+        <div class="card"><h4>ETL</h4><p class="muted">Extract, Transform, Load: the pipeline that fills a data warehouse.</p></div>
+      </div>
+      <div class="footer">
+        <p><b>Chapter 5: Data Resource Management</b> &middot; Group study portal for EMBA IT Strategy.</p>
+        <p>Prepared by Ahmed Awad, Tariq Salama, Ahmed Sabri, and Mahmoud El-Serwy &middot; Instructor: Dr. Ghada &middot; 10-06-2026.</p>
+      </div>
+    </section>
+  </main>
+</div>
+<button class="topbtn" id="topbtn" onclick="scrollTo({top:0,behavior:'smooth'})">&#8593;</button>
+
+<script>
+/* ---- scroll spy ---- */
+const links=[...document.querySelectorAll('nav.toc a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+const spy=()=>{
+  let i=secs.length-1;
+  for(let j=0;j<secs.length;j++){if(secs[j]&&secs[j].getBoundingClientRect().top<=120)i=j;}
+  links.forEach(l=>l.classList.remove('active'));if(links[i])links[i].classList.add('active');
+  document.getElementById('topbtn').classList.toggle('show',scrollY>500);
+};
+addEventListener('scroll',spy);spy();
+
+/* ---- hierarchy ladder ---- */
+const rungs=[...document.querySelectorAll('#ladder .rung')];
+rungs.forEach(r=>r.onclick=()=>{rungs.forEach(x=>x.classList.remove('active'));r.classList.add('active');});
+
+/* ---- file vs database ---- */
+const fvdLeft=document.getElementById('fvdLeft'),fvdRight=document.getElementById('fvdRight');
+function toggleFvd(){document.getElementById('fvdToggle').classList.toggle('db');renderFvd();}
+function renderFvd(){
+  const db=document.getElementById('fvdToggle').classList.contains('db');
+  const note=document.getElementById('fvdNote');
+  if(!db){
+    fvdLeft.innerHTML='<h4>&#128193; Three separate files</h4>'+
+      '<div class="filebox"><span class="tag2">SALES.dat</span><br>cust: <span class="dup">Ahmed Sabri, 0100-123</span></div>'+
+      '<div class="filebox"><span class="tag2">BILLING.dat</span><br>cust: <span class="dup">Ahmed Sabri, 0100-123</span></div>'+
+      '<div class="filebox"><span class="tag2">SUPPORT.dat</span><br>cust: <span class="dup">Ahmed Sabri, 0100-123</span></div>';
+    document.getElementById('fvdRightTitle').innerHTML='&#9888; Problems of file processing';
+    fvdRight.innerHTML='<ul style="margin-left:18px;color:var(--muted);font-size:14px;line-height:1.85">'+
+      '<li><b style="color:var(--red)">Redundancy</b> - same customer stored 3 times</li>'+
+      '<li><b style="color:var(--red)">No integration</b> - data trapped in islands</li>'+
+      '<li><b style="color:var(--red)">Data dependence</b> - programs tied to formats</li>'+
+      '<li><b style="color:var(--red)">Inconsistency</b> - update one, others go stale</li></ul>';
+    note.innerHTML='<b style="color:var(--amber-soft)">File processing:</b> the same customer is stored three times (in red).';
+  }else{
+    fvdLeft.innerHTML='<h4>&#128451; One shared database</h4>'+
+      '<div class="arrows"><span>SALES</span><span>BILLING</span><span>SUPPORT</span></div>'+
+      '<div class="arrows">&#8595; &#8595; &#8595;</div>'+
+      '<div class="central">CUSTOMER table<br>Ahmed Sabri, 0100-123 (stored once)</div>'+
+      '<p class="muted" style="margin-top:10px;font-size:13px">All three apps use the same record via the DBMS.</p>';
+    document.getElementById('fvdRightTitle').innerHTML='&#10004; Database advantages';
+    fvdRight.innerHTML='<ul style="margin-left:18px;color:var(--muted);font-size:14px;line-height:1.85">'+
+      '<li><b style="color:var(--green)">Minimal redundancy</b> - stored once, shared</li>'+
+      '<li><b style="color:var(--green)">Integrated</b> - related data connected</li>'+
+      '<li><b style="color:var(--green)">Data independence</b> - DBMS hides storage</li>'+
+      '<li><b style="color:var(--green)">Integrity &amp; security</b> - one point of control</li></ul>';
+    note.innerHTML='<b style="color:var(--amber-soft)">Database approach:</b> one record, shared by every app.';
+  }
+}
+renderFvd();
+
+/* ---- structure explorer ---- */
+const structures={
+  hierarchical:{name:'Hierarchical',desc:'Records sit in a tree. Each parent links to many children, but a child has only one parent (one-to-many).',use:'Best for structured, routine transactions.',
+    svg:`<svg viewBox="0 0 360 270"><line class="edge" x1="180" y1="55" x2="90" y2="135"/><line class="edge" x1="180" y1="55" x2="270" y2="135"/><line class="edge" x1="90" y1="167" x2="50" y2="225"/><line class="edge" x1="90" y1="167" x2="130" y2="225"/><line class="edge" x1="270" y1="167" x2="230" y2="225"/><line class="edge" x1="270" y1="167" x2="310" y2="225"/><rect class="node" x="140" y="25" width="80" height="34" rx="7"/><text class="ntext" x="180" y="47">Company</text><rect class="node" x="52" y="135" width="76" height="32" rx="7"/><text class="ntext" x="90" y="156">Dept A</text><rect class="node" x="232" y="135" width="76" height="32" rx="7"/><text class="ntext" x="270" y="156">Dept B</text><rect class="node" x="20" y="225" width="60" height="30" rx="7"/><text class="ntext" x="50" y="245">Emp</text><rect class="node" x="100" y="225" width="60" height="30" rx="7"/><text class="ntext" x="130" y="245">Emp</text><rect class="node" x="200" y="225" width="60" height="30" rx="7"/><text class="ntext" x="230" y="245">Emp</text><rect class="node" x="280" y="225" width="60" height="30" rx="7"/><text class="ntext" x="310" y="245">Emp</text></svg>`},
+  network:{name:'Network',desc:'Records link in many-to-many relationships. A child can have several parents, forming a mesh.',use:'Used in some mainframe DBMS; more flexible than hierarchical.',
+    svg:`<svg viewBox="0 0 360 270"><line class="edge live" x1="100" y1="70" x2="180" y2="150"/><line class="edge live" x1="260" y1="70" x2="180" y2="150"/><line class="edge live" x1="100" y1="70" x2="260" y2="70"/><line class="edge live" x1="180" y1="150" x2="90" y2="222"/><line class="edge live" x1="180" y1="150" x2="270" y2="222"/><rect class="node amber" x="62" y="50" width="76" height="34" rx="9"/><text class="ntext" x="100" y="72">Supplier</text><rect class="node amber" x="222" y="50" width="76" height="34" rx="9"/><text class="ntext" x="260" y="72">Project</text><rect class="node" x="142" y="132" width="76" height="34" rx="9"/><text class="ntext" x="180" y="154">Part</text><rect class="node" x="52" y="205" width="76" height="34" rx="9"/><text class="ntext" x="90" y="227">Order</text><rect class="node" x="232" y="205" width="76" height="34" rx="9"/><text class="ntext" x="270" y="227">Invoice</text></svg>`},
+  relational:{name:'Relational',desc:'Data lives in tables of rows (records) and columns (fields). Tables link through a shared key. The most widely used model.',use:'Easy ad hoc queries; the backbone of business systems.',
+    svg:`<svg viewBox="0 0 360 260"><rect class="node" x="20" y="40" width="150" height="118" rx="8"/><text class="ntext" x="95" y="62" style="fill:var(--cyan-soft)">CUSTOMERS</text><line class="edge" x1="20" y1="74" x2="170" y2="74"/><text class="ntext" x="95" y="94">id | name</text><text class="ntext" x="95" y="116">1 | Ahmed</text><text class="ntext" x="95" y="138">2 | Sara</text><rect class="node amber" x="190" y="40" width="150" height="118" rx="8"/><text class="ntext" x="265" y="62" style="fill:var(--amber-soft)">ORDERS</text><line class="edge" x1="190" y1="74" x2="340" y2="74"/><text class="ntext" x="265" y="94">id | cust_id</text><text class="ntext" x="265" y="116">10 | 1</text><text class="ntext" x="265" y="138">11 | 2</text><line class="edge live" x1="170" y1="116" x2="190" y2="116"/><text class="ntext" x="180" y="200" style="fill:var(--cyan-soft)">join on id = cust_id</text></svg>`},
+  multidimensional:{name:'Multidimensional',desc:'A variation of the relational model that views data as cubes. Each cell holds a measure across several dimensions.',use:'Powers OLAP: fast slice-and-dice analytics.',
+    svg:`<svg viewBox="0 0 360 260"><g transform="translate(120,50)"><polygon class="node" points="0,40 80,0 160,40 80,80"/><polygon class="node amber" points="0,40 0,150 80,190 80,80"/><polygon class="node" points="160,40 160,150 80,190 80,80"/><text class="ntext" x="80" y="45">Product</text><text class="ntext" x="35" y="125" transform="rotate(-58 35 125)">Time</text><text class="ntext" x="128" y="125" transform="rotate(58 128 125)">Region</text></g></svg>`},
+  oo:{name:'Object-Oriented',desc:'Bundles data with the methods that act on it as objects. Supports complex types and inheritance.',use:'Multimedia and web apps; basis of object-relational DBs.',
+    svg:`<svg viewBox="0 0 360 260"><rect class="node" x="80" y="30" width="200" height="200" rx="14"/><text class="ntext" x="180" y="60" style="fill:var(--cyan-soft)">object: Account</text><line class="edge" x1="80" y1="76" x2="280" y2="76"/><text class="ntext" x="180" y="106">data: balance, owner</text><line class="edge" x1="110" y1="128" x2="250" y2="128"/><text class="ntext" x="180" y="160" style="fill:var(--amber-soft)">methods()</text><text class="ntext" x="180" y="188">deposit()</text><text class="ntext" x="180" y="212">withdraw()</text></svg>`}
+};
+const tabsWrap=document.getElementById('structTabs');
+Object.keys(structures).forEach((k,i)=>{const b=document.createElement('div');b.className='tab'+(i===0?' on':'');b.textContent=structures[k].name;b.onclick=()=>selStruct(k,b);tabsWrap.appendChild(b);});
+function selStruct(k,btn){[...tabsWrap.children].forEach(t=>t.classList.remove('on'));btn.classList.add('on');const s=structures[k];
+  document.getElementById('structStage').innerHTML=s.svg;
+  document.getElementById('structInfo').innerHTML=`<h3>${s.name}</h3><p class="muted">${s.desc}</p><div class="use">&#9654; ${s.use}</div>`;}
+selStruct('hierarchical',tabsWrap.children[0]);
+
+/* ---- mini SQL engine ---- */
+const DB={employees:{cols:['id','name','dept','salary','city'],rows:[
+  [1,'Ahmed','Sales',9200,'Cairo'],[2,'Sara','IT',8400,'Giza'],[3,'Omar','Sales',6100,'Cairo'],
+  [4,'Lina','Finance',11200,'Alexandria'],[5,'Youssef','IT',7300,'Cairo'],[6,'Mona','HR',5400,'Giza'],
+  [7,'Khaled','Finance',9800,'Alexandria'],[8,'Nour','IT',6700,'Cairo'],[9,'Hana','Sales',7600,'Giza'],
+  [10,'Tarek','HR',5900,'Cairo']]}};
+const chips=['SELECT * FROM employees','SELECT name, salary FROM employees WHERE dept = \'IT\'','SELECT name, dept FROM employees WHERE city = \'Cairo\' ORDER BY salary DESC','SELECT dept, COUNT(*) FROM employees','SELECT name FROM employees WHERE salary >= 8000 AND city = \'Cairo\''];
+const chipsWrap=document.getElementById('sqlChips');
+chips.forEach(q=>{const c=document.createElement('span');c.className='chip';c.textContent=q.length>40?q.slice(0,38)+'...':q;c.title=q;c.onclick=()=>{document.getElementById('sqlbox').value=q;runSQL();};chipsWrap.appendChild(c);});
+function evalCond(row,cols,cond){const ors=cond.split(/\bor\b/i);return ors.some(o=>o.split(/\band\b/i).every(a=>evalSimple(row,cols,a.trim())));}
+function evalSimple(row,cols,expr){
+  const m=expr.match(/^([a-zA-Z_]+)\s*(>=|<=|!=|<>|=|>|<|like)\s*(.+)$/i);
+  if(!m)throw new Error('Cannot understand condition: '+expr);
+  const col=m[1].toLowerCase(),op=m[2].toLowerCase();let val=m[3].trim();
+  const ci=cols.indexOf(col);if(ci<0)throw new Error('Unknown column: '+col);
+  let cell=row[ci];const quoted=val.startsWith("'")||val.startsWith('"');val=val.replace(/^['"]|['"]$/g,'');
+  if(!quoted&&!isNaN(parseFloat(val))&&op!=='like')val=parseFloat(val);
+  if(op==='like'){const re=new RegExp('^'+val.replace(/%/g,'.*').replace(/_/g,'.')+'$','i');return re.test(String(cell));}
+  if(op==='=')return String(cell).toLowerCase()==String(val).toLowerCase();
+  if(op==='!='||op==='<>')return String(cell).toLowerCase()!=String(val).toLowerCase();
+  cell=typeof cell==='number'?cell:parseFloat(cell);val=typeof val==='number'?val:parseFloat(val);
+  if(op==='>')return cell>val;if(op==='<')return cell<val;if(op==='>=')return cell>=val;if(op==='<=')return cell<=val;
+  throw new Error('Unsupported operator');
+}
+function runSQL(){
+  const box=document.getElementById('sqlResult');let q=document.getElementById('sqlbox').value.trim().replace(/;$/,'');
+  try{
+    const m=q.match(/^select\s+(.+?)\s+from\s+([a-zA-Z_]+)(?:\s+where\s+(.+?))?(?:\s+order\s+by\s+([a-zA-Z_]+)(\s+desc|\s+asc)?)?(?:\s+limit\s+(\d+))?$/is);
+    if(!m)throw new Error('Use: SELECT cols FROM employees [WHERE ...] [ORDER BY col [DESC]] [LIMIT n]');
+    let sel=m[1].trim(),table=m[2].toLowerCase(),where=m[3],ob=m[4],dir=(m[5]||'').trim().toLowerCase(),lim=m[6];
+    if(!DB[table])throw new Error('Only the "employees" table exists.');
+    const cols=DB[table].cols;let rows=DB[table].rows.slice();
+    if(where)rows=rows.filter(r=>evalCond(r,cols,where));
+    const countAgg=/count\s*\(\s*\*\s*\)/i.test(sel);
+    const groupCol=(!/^\s*count/i.test(sel)&&countAgg)?sel.split(',')[0].trim().toLowerCase():null;
+    if(countAgg){let out,outCols;
+      if(groupCol&&cols.includes(groupCol)){const gi=cols.indexOf(groupCol);const map={};rows.forEach(r=>{map[r[gi]]=(map[r[gi]]||0)+1;});outCols=[groupCol,'count'];out=Object.keys(map).map(k=>[k,map[k]]);}
+      else{outCols=['count'];out=[[rows.length]];}
+      return renderResult(box,outCols,out,out.length);}
+    let outCols,proj;
+    if(sel==='*'){outCols=cols;proj=rows;}
+    else{outCols=sel.split(',').map(c=>c.trim().toLowerCase());const bad=outCols.find(c=>!cols.includes(c));if(bad)throw new Error('Unknown column: '+bad);proj=rows.map(r=>outCols.map(c=>r[cols.indexOf(c)]));}
+    if(ob&&cols.includes(ob.toLowerCase())){const oi=outCols.indexOf(ob.toLowerCase());if(oi>=0)proj.sort((a,b)=>{const x=a[oi],y=b[oi];const n=(typeof x==='number');let c=n?x-y:String(x).localeCompare(String(y));return dir==='desc'?-c:c;});}
+    if(lim)proj=proj.slice(0,parseInt(lim));
+    renderResult(box,outCols,proj,proj.length);
+  }catch(e){box.innerHTML='<div class="err">&#9888; '+e.message+'</div>';}
+}
+function renderResult(box,cols,rows,n){
+  if(!rows.length){box.innerHTML='<div class="resmeta">0 rows returned.</div>';return;}
+  let h='<table><thead><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
+  h+=rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table><div class="resmeta">'+n+' row'+(n===1?'':'s')+' returned.</div>';
+  box.innerHTML=h;
+}
+function showSchema(){const t=DB.employees;renderResult(document.getElementById('sqlResult'),t.cols,t.rows,t.rows.length);}
+
+/* ---- ETL ---- */
+function runETL(){
+  const stages=[...document.querySelectorAll('#etl .etlstage')];stages.forEach(s=>s.classList.remove('lit'));
+  stages.forEach((s,i)=>setTimeout(()=>{stages.forEach(x=>x.classList.remove('lit'));s.classList.add('lit');},i*700));
+  setTimeout(()=>stages.forEach(s=>s.classList.add('lit')),stages.length*700+200);
+}
+
+/* ---- OLAP ---- */
+const cube=document.getElementById('cube');let rx=-22,ry=-32,spin=null,dragging=false,px=null,py=null;
+function setCube(){cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;}
+cube.parentElement.addEventListener('mousedown',e=>{dragging=true;px=e.clientX;py=e.clientY;if(spin){cancelAnimationFrame(spin);spin=null;}});
+addEventListener('mouseup',()=>dragging=false);
+addEventListener('mousemove',e=>{if(!dragging)return;ry+=(e.clientX-px)*0.5;rx-=(e.clientY-py)*0.5;px=e.clientX;py=e.clientY;setCube();});
+cube.parentElement.addEventListener('touchmove',e=>{const t=e.touches[0];if(px!=null){ry+=(t.clientX-px)*0.5;rx-=(t.clientY-py)*0.5;setCube();}px=t.clientX;py=t.clientY;},{passive:true});
+cube.parentElement.addEventListener('touchend',()=>{px=py=null;});
+function spinCube(){if(spin){cancelAnimationFrame(spin);spin=null;return;}const step=()=>{ry+=0.5;setCube();spin=requestAnimationFrame(step);};step();}
+function sliceCube(dim){const faces=[...cube.querySelectorAll('.face')];faces.forEach(f=>f.classList.remove('lit'));const note=document.getElementById('olapNote');
+  if(dim==='product'){cube.querySelector('.f-top').classList.add('lit');note.innerHTML='<b style="color:var(--amber-soft)">Sliced by Product:</b> hold one product fixed, read Sales across every Region and Time.';}
+  if(dim==='region'){cube.querySelector('.f-left').classList.add('lit');note.innerHTML='<b style="color:var(--amber-soft)">Sliced by Region:</b> hold one region fixed, compare Products over Time.';}
+  if(dim==='time'){cube.querySelector('.f-right').classList.add('lit');note.innerHTML='<b style="color:var(--amber-soft)">Sliced by Time = Q1:</b> the cube becomes a flat Product-by-Region table.';}
+}
+
+/* ---- market basket ---- */
+const basket={bread:[['Butter',82],['Jam',64],['Milk',51]],coffee:[['Sugar',88],['Milk',73],['Cookies',47]],pasta:[['Tomato sauce',79],['Cheese',61],['Olive oil',44]],diapers:[['Baby wipes',76],['Beer',55],['Milk',49]]};
+const labels={bread:'Bread',coffee:'Coffee',pasta:'Pasta',diapers:'Diapers'};
+function showBasket(k){document.getElementById('assocTitle').textContent='# Customers who buy '+labels[k]+' also buy...';
+  const wrap=document.getElementById('assocBars');wrap.innerHTML='';
+  basket[k].forEach((b,i)=>{const el=document.createElement('div');el.className='bar';
+    el.innerHTML=`<div class="lab"><span>${b[0]}</span><b>${b[1]}%</b></div><div class="track"><div class="fillbar"></div></div>`;
+    wrap.appendChild(el);setTimeout(()=>el.querySelector('.fillbar').style.width=b[1]+'%',60+i*120);});}
+[...document.querySelectorAll('#prods .prod')].forEach(p=>p.onclick=()=>{document.querySelectorAll('#prods .prod').forEach(x=>x.classList.remove('sel'));p.classList.add('sel');showBasket(p.dataset.k);});
+showBasket('bread');
+</script>
+</body>
+</html>

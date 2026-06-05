@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Data Resource Management - Interactive Presentation | EMBA IT Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070f1c; --bg2:#0b1830; --panel:#0e2038; --panel2:#12294a;
+    --line:#1d3a5f; --line2:#2b4d76;
+    --ink:#eaf2ff; --muted:#9fb6d4; --faint:#6b87ab;
+    --blue:#3d8bff; --blue-soft:#6fa8ff; --cyan:#27e0d4; --cyan-soft:#7af0e8;
+    --amber:#f5b631; --amber-soft:#ffd472; --red:#ff6b6b; --green:#39d98a;
+    --display:'Fraunces',Georgia,serif;
+    --body:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    --mono:'JetBrains Mono','SFMono-Regular',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* animated grid + glow backdrop */
+  .backdrop{position:fixed;inset:0;z-index:0;overflow:hidden;background:
+     radial-gradient(1100px 700px at 78% -10%, rgba(61,139,255,.18), transparent 60%),
+     radial-gradient(900px 600px at 10% 110%, rgba(39,224,212,.13), transparent 60%),
+     var(--bg);}
+  .backdrop::before{content:"";position:absolute;inset:-2px;
+    background-image:linear-gradient(rgba(61,139,255,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(61,139,255,.06) 1px,transparent 1px);
+    background-size:46px 46px;mask-image:radial-gradient(circle at 50% 40%,#000 30%,transparent 85%);
+    animation:drift 26s linear infinite}
+  @keyframes drift{from{background-position:0 0,0 0}to{background-position:46px 46px,46px 46px}}
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.04;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+
+  /* deck + slides */
+  .deck{position:relative;z-index:2;height:100vh;width:100vw}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;
+    padding:clamp(28px,5vw,70px) clamp(28px,6vw,96px);
+    opacity:0;transition:opacity .5s ease}
+  .slide.active{display:flex;opacity:1}
+  .slide.active .reveal{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+  .slide.active .reveal:nth-child(2){animation-delay:.08s}
+  .slide.active .reveal:nth-child(3){animation-delay:.16s}
+  .slide.active .reveal:nth-child(4){animation-delay:.24s}
+  .slide.active .reveal:nth-child(5){animation-delay:.32s}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+  .kicker{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:12px;
+    letter-spacing:3px;text-transform:uppercase;color:var(--cyan-soft);margin-bottom:18px}
+  .kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan)}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(34px,6.2vw,82px);line-height:1.02;
+    letter-spacing:-.02em}
+  h2{font-family:var(--display);font-weight:600;font-size:clamp(28px,4.2vw,52px);line-height:1.05;
+    letter-spacing:-.01em;margin-bottom:6px}
+  h2 .em{color:var(--amber);font-style:italic}
+  .sub{color:var(--muted);font-size:clamp(15px,1.5vw,19px);max-width:70ch;margin-top:8px}
+  .slidehead{margin-bottom:20px}
+  .slidehead .num{font-family:var(--mono);color:var(--faint);font-size:13px;letter-spacing:2px}
+
+  .fill{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+
+  /* cards */
+  .cards{display:grid;gap:clamp(12px,1.6vw,20px)}
+  .c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}.c4{grid-template-columns:repeat(4,1fr)}.c5{grid-template-columns:repeat(5,1fr)}
+  .card{position:relative;background:linear-gradient(180deg,var(--panel),var(--bg2));
+    border:1px solid var(--line);border-radius:16px;padding:clamp(16px,1.7vw,24px);
+    transition:transform .25s,border-color .25s,box-shadow .25s;overflow:hidden}
+  .card:hover{transform:translateY(-4px);border-color:var(--line2);
+    box-shadow:0 18px 40px -20px rgba(0,0,0,.8),0 0 0 1px rgba(61,139,255,.15)}
+  .card .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+    background:rgba(61,139,255,.13);border:1px solid var(--line2);margin-bottom:12px;font-size:22px}
+  .card h3{font-family:var(--display);font-weight:600;font-size:clamp(16px,1.7vw,21px);margin-bottom:6px;color:#fff}
+  .card p{color:var(--muted);font-size:clamp(12.5px,1.05vw,14.5px);line-height:1.55}
+  .card .edge{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
+
+  .pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;
+    padding:5px 12px;border-radius:999px;border:1px solid var(--line2);color:var(--cyan-soft);background:rgba(39,224,212,.06)}
+
+  /* chrome: progress, dots, hint */
+  .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--cyan),var(--blue));
+    z-index:40;transition:width .45s cubic-bezier(.2,.7,.2,1);box-shadow:0 0 12px var(--cyan)}
+  .chrome{position:fixed;z-index:40;bottom:18px;right:22px;display:flex;align-items:center;gap:14px}
+  .counter{font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .counter b{color:var(--ink)}
+  .navbtn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line2);background:rgba(14,32,56,.7);
+    color:var(--ink);cursor:pointer;font-size:18px;display:grid;place-items:center;backdrop-filter:blur(8px);transition:.2s}
+  .navbtn:hover{background:var(--panel2);border-color:var(--blue)}
+  .dots{position:fixed;z-index:40;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:8px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:var(--line2);cursor:pointer;transition:.25s}
+  .dots i.on{background:var(--cyan);width:22px;border-radius:5px;box-shadow:0 0 10px var(--cyan)}
+  .brandmark{position:fixed;z-index:40;top:18px;left:24px;display:flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:12px;letter-spacing:1.5px;color:var(--faint)}
+  .brandmark .lg{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--blue),var(--cyan));
+    display:grid;place-items:center;color:#04101f;font-weight:700;font-family:var(--body)}
+  .hint{position:fixed;z-index:40;bottom:20px;left:24px;font-family:var(--mono);font-size:11px;color:var(--faint)}
+  kbd{font-family:var(--mono);background:var(--panel);border:1px solid var(--line2);border-radius:5px;padding:1px 6px;font-size:11px}
+
+  /* ===== title slide ===== */
+  .title-wrap{display:flex;flex-direction:column;justify-content:center;height:100%}
+  .bigmark{width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,var(--blue),var(--cyan));
+    display:grid;place-items:center;font-size:42px;color:#04101f;margin-bottom:26px;
+    box-shadow:0 0 60px -10px var(--cyan);animation:float 5s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .title-wrap h1 .grad{background:linear-gradient(120deg,#fff 20%,var(--cyan-soft) 60%,var(--blue-soft));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .authors{margin-top:34px;border-left:3px solid var(--amber);padding-left:18px;display:flex;flex-direction:column;gap:5px}
+  .authors .who{font-size:15px;color:var(--ink)}.authors .who b{color:var(--amber-soft);font-weight:600}
+  .authors .meta{font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+
+  /* ===== hierarchy ladder ===== */
+  .ladder{display:flex;gap:14px;align-items:stretch;width:100%}
+  .rung{flex:1;background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);
+    border-radius:14px;padding:18px 16px;cursor:pointer;position:relative;transition:.3s;opacity:.55;transform:translateY(8px)}
+  .rung.shown{opacity:1;transform:none}
+  .rung.active{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 16px 40px -22px var(--cyan)}
+  .rung .lvl{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--cyan-soft)}
+  .rung .ic{font-size:30px;margin:8px 0}
+  .rung h4{font-family:var(--display);font-size:19px;color:#fff;margin-bottom:6px}
+  .rung p{font-size:13px;color:var(--muted);line-height:1.5}
+  .rung .ex{margin-top:10px;font-family:var(--mono);font-size:11.5px;color:var(--amber-soft);
+    background:rgba(245,182,49,.08);border:1px solid rgba(245,182,49,.2);border-radius:8px;padding:7px 9px}
+  .rung .chev{position:absolute;right:-13px;top:50%;transform:translateY(-50%);color:var(--cyan);font-size:20px;z-index:3}
+  .rung:last-child .chev{display:none}
+
+  /* ===== file vs db ===== */
+  .switchrow{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .toggle{position:relative;width:230px;height:44px;border-radius:12px;border:1px solid var(--line2);
+    background:var(--panel);display:flex;cursor:pointer;font-family:var(--mono);font-size:12.5px;overflow:hidden}
+  .toggle span{flex:1;display:grid;place-items:center;z-index:2;transition:.25s;color:var(--muted)}
+  .toggle .knob{position:absolute;top:3px;left:3px;width:calc(50% - 3px);height:38px;border-radius:9px;
+    background:linear-gradient(135deg,var(--blue),var(--cyan));transition:.3s cubic-bezier(.2,.7,.2,1)}
+  .toggle.db .knob{left:calc(50%)}
+  .toggle.db .s-db,.toggle:not(.db) .s-file{color:#04101f;font-weight:700}
+  .fvd{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .fvd .panelbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;min-height:230px}
+  .fvd h4{font-family:var(--display);font-size:17px;color:#fff;margin-bottom:10px;display:flex;gap:8px;align-items:center}
+  .filebox{border:1px dashed var(--line2);border-radius:10px;padding:9px 11px;margin:8px 0;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .filebox .tag{color:var(--blue-soft)}
+  .dup{color:var(--red);font-weight:700}
+  .central{border:1px solid var(--cyan);border-radius:10px;padding:11px;font-family:var(--mono);font-size:12px;
+    background:rgba(39,224,212,.06);color:var(--cyan-soft);text-align:center}
+  .arrows{display:flex;justify-content:space-around;color:var(--faint);font-size:18px;margin:6px 0}
+  .note{margin-top:14px;font-size:13.5px;color:var(--muted)}
+  .note b{color:var(--amber-soft)}
+
+  /* ===== structure explorer ===== */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+  .tab{font-family:var(--mono);font-size:12.5px;padding:8px 14px;border-radius:10px;border:1px solid var(--line2);
+    background:var(--panel);color:var(--muted);cursor:pointer;transition:.2s}
+  .tab:hover{color:var(--ink);border-color:var(--blue)}
+  .tab.on{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101f;font-weight:700;border-color:transparent}
+  .explorer{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:center}
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;min-height:340px;display:grid;place-items:center;padding:18px}
+  .stage svg{width:100%;height:auto;max-height:330px}
+  .exinfo h3{font-family:var(--display);font-size:26px;color:#fff;margin-bottom:8px}
+  .exinfo p{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:10px}
+  .exinfo .use{font-family:var(--mono);font-size:12.5px;color:var(--cyan-soft)}
+  .node{fill:var(--panel2);stroke:var(--blue);stroke-width:2}
+  .node.amber{stroke:var(--amber)}
+  .ntext{fill:var(--ink);font-family:var(--mono);font-size:12px;text-anchor:middle}
+  .edge{stroke:var(--line2);stroke-width:2;fill:none}
+  .edge.live{stroke:var(--cyan);stroke-dasharray:6 5;animation:dash 1s linear infinite}
+  @keyframes dash{to{stroke-dashoffset:-22}}
+
+  /* ===== evaluation table ===== */
+  table.eval{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:14.5px}
+  table.eval th{font-family:var(--mono);font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan-soft);text-align:left;padding:0 16px 6px}
+  table.eval td{background:var(--panel);padding:14px 16px;color:var(--ink);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  table.eval td:first-child{border-left:3px solid var(--blue);border-top-left-radius:11px;border-bottom-left-radius:11px;font-weight:600;font-family:var(--display);color:#fff;font-size:16px}
+  table.eval td:last-child{border-top-right-radius:11px;border-bottom-right-radius:11px}
+  table.eval .good{color:var(--green)}table.eval .bad{color:var(--red)}
+  table.eval tr.relational td:first-child{border-left-color:var(--green)}
+
+  /* ===== SQL playground ===== */
+  .sqlwrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;height:100%}
+  .sqlpane{display:flex;flex-direction:column;min-height:0}
+  .editorbox{background:#04101f;border:1px solid var(--line2);border-radius:14px;overflow:hidden;flex:1;display:flex;flex-direction:column}
+  .editorbar{display:flex;align-items:center;gap:7px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--bg2)}
+  .editorbar .b{width:11px;height:11px;border-radius:50%}.editorbar .r{background:#ff5f57}.editorbar .y{background:#febc2e}.editorbar .g{background:#28c840}
+  .editorbar .ttl{margin-left:8px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+  textarea#sql{flex:1;width:100%;background:transparent;border:0;color:#dff1ff;font-family:var(--mono);
+    font-size:15px;line-height:1.7;padding:14px 16px;resize:none;outline:none;min-height:150px}
+  .sqlbtns{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .btn{font-family:var(--mono);font-size:13px;padding:10px 18px;border-radius:10px;cursor:pointer;border:1px solid var(--line2);background:var(--panel);color:var(--ink);transition:.2s}
+  .btn.run{background:linear-gradient(135deg,var(--blue),var(--cyan));color:#04101f;font-weight:700;border-color:transparent}
+  .btn:hover{transform:translateY(-2px)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .chip{font-family:var(--mono);font-size:11.5px;padding:6px 11px;border-radius:999px;border:1px solid var(--line2);
+    color:var(--amber-soft);background:rgba(245,182,49,.06);cursor:pointer;transition:.2s}
+  .chip:hover{border-color:var(--amber);color:#fff}
+  .resultbox{background:var(--panel);border:1px solid var(--line);border-radius:14px;flex:1;overflow:auto;padding:4px}
+  .resultbox table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:13px}
+  .resultbox th{position:sticky;top:0;background:var(--panel2);color:var(--cyan-soft);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line2)}
+  .resultbox td{padding:8px 12px;border-bottom:1px solid var(--line);color:var(--ink)}
+  .resultbox tr:hover td{background:rgba(61,139,255,.07)}
+  .resmeta{font-family:var(--mono);font-size:12px;color:var(--faint);padding:9px 12px}
+  .err{color:var(--red);font-family:var(--mono);font-size:13px;padding:12px}
+
+  /* ===== ETL ===== */
+  .etl{display:flex;align-items:stretch;gap:0;width:100%}
+  .etlstage{flex:1;position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:18px 16px;text-align:center;transition:.35s}
+  .etlstage.lit{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 14px 38px -22px var(--cyan);transform:translateY(-5px)}
+  .etlstage .ic{font-size:30px;margin-bottom:8px}
+  .etlstage h4{font-family:var(--display);font-size:17px;color:#fff;margin-bottom:5px}
+  .etlstage p{font-size:12.5px;color:var(--muted);line-height:1.5}
+  .etlarrow{display:grid;place-items:center;padding:0 6px;color:var(--faint);font-size:22px;position:relative}
+  .etlarrow .pkt{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 14px var(--cyan);opacity:0}
+  .etlarrow.flow .pkt{animation:pkt .6s ease forwards}
+  @keyframes pkt{0%{opacity:1;transform:translateX(-22px)}100%{opacity:0;transform:translateX(22px)}}
+
+  /* ===== OLAP cube ===== */
+  .olap{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;height:100%}
+  .scene{perspective:900px;display:grid;place-items:center;height:340px}
+  .cube{position:relative;width:200px;height:200px;transform-style:preserve-3d;
+    transform:rotateX(-22deg) rotateY(-32deg);transition:transform .2s}
+  .face{position:absolute;width:200px;height:200px;border:1.5px solid var(--cyan);
+    display:grid;place-items:center;font-family:var(--mono);font-size:14px;color:var(--cyan-soft);
+    background:rgba(39,224,212,.08);text-align:center;backface-visibility:visible}
+  .face.lit{background:rgba(245,182,49,.22);border-color:var(--amber);color:var(--amber-soft);box-shadow:inset 0 0 40px rgba(245,182,49,.25)}
+  .f-front{transform:translateZ(100px)}.f-back{transform:rotateY(180deg) translateZ(100px)}
+  .f-right{transform:rotateY(90deg) translateZ(100px)}.f-left{transform:rotateY(-90deg) translateZ(100px)}
+  .f-top{transform:rotateX(90deg) translateZ(100px)}.f-bottom{transform:rotateX(-90deg) translateZ(100px)}
+  .olapinfo h3{font-family:var(--display);font-size:24px;color:#fff;margin-bottom:8px}
+  .olapinfo p{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:12px}
+  .dimbtns{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* ===== market basket ===== */
+  .basket{display:grid;grid-template-columns:.8fr 1.2fr;gap:24px;align-items:center;height:100%}
+  .prods{display:flex;flex-direction:column;gap:10px}
+  .prod{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;
+    background:var(--panel);cursor:pointer;transition:.2s;font-size:15px}
+  .prod .e{font-size:24px}
+  .prod:hover{border-color:var(--blue);transform:translateX(4px)}
+  .prod.sel{border-color:var(--amber);background:rgba(245,182,49,.1);color:#fff}
+  .assoc h4{font-family:var(--mono);font-size:13px;color:var(--cyan-soft);margin-bottom:14px}
+  .bar{margin:11px 0}
+  .bar .lab{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+  .bar .lab b{color:var(--amber-soft);font-family:var(--mono)}
+  .bar .track{height:13px;background:var(--panel);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+  .bar .fillbar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .8s cubic-bezier(.2,.7,.2,1)}
+
+  /* case + closing */
+  .casegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .closing{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;text-align:center}
+  .closing h1{font-size:clamp(40px,8vw,96px)}
+  .closing .grad{background:linear-gradient(120deg,#fff,var(--cyan-soft));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+  @media (max-width:860px){
+    .c3,.c4,.c5{grid-template-columns:1fr 1fr}
+    .explorer,.sqlwrap,.olap,.basket{grid-template-columns:1fr}
+    .ladder{flex-direction:column}.rung .chev{display:none}
+    .scene{height:240px}
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"></div>
+<div class="grain"></div>
+<div class="progress" id="bar"></div>
+<div class="brandmark"><span class="lg">5</span> EMBA IT STRATEGY / CH.5</div>
+<div class="hint">Use <kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>Space</kbd> &middot; <kbd>F</kbd> fullscreen</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide active">
+    <div class="title-wrap">
+      <div class="bigmark reveal">&#128451;</div>
+      <div class="kicker reveal"><span class="dot"></span> CHAPTER 5 &middot; GROUP PRESENTATION</div>
+      <h1 class="reveal">Data <span class="grad">Resource</span><br>Management</h1>
+      <p class="sub reveal" style="margin-top:16px;font-size:clamp(16px,1.8vw,22px)">Managing data as a strategic business asset. An interactive walk through the logical data hierarchy, database structures, warehousing, mining, and the DBMS.</p>
+      <div class="authors reveal">
+        <div class="who"><b>Prepared by:</b> Ahmed Awad &nbsp;&middot;&nbsp; Tariq Salama &nbsp;&middot;&nbsp; Ahmed Sabri &nbsp;&middot;&nbsp; Mahmoud El-Serwy</div>
+        <div class="meta">Instructor: Dr. Ghada &nbsp;|&nbsp; Submission: 10-06-2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 WHY DRM -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">01 / FOUNDATIONS</div><h2>Data as a <span class="em">strategic resource</span></h2>
+      <p class="sub">Data resource management is a managerial activity: it applies IS technologies to manage data as a valuable resource that serves the information needs of business stakeholders.</p></div>
+    <div class="fill">
+      <div class="cards c4">
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128142;</div><h3>Data is an asset</h3><p>Well-managed data is a competitive resource, not just a by-product of operations.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128202;</div><h3>Better decisions</h3><p>Clean, integrated data feeds analytics, reporting, and decision support.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#129518;</div><h3>One version of truth</h3><p>Shared databases remove redundancy and conflicting records across the business.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128737;</div><h3>Control &amp; trust</h3><p>Managed data improves security, integrity, privacy, and compliance.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 HIERARCHY LADDER -->
+  <section class="slide" data-enter="ladder">
+    <div class="slidehead reveal"><div class="num">02 / FOUNDATIONS</div><h2>The logical <span class="em">data hierarchy</span></h2>
+      <p class="sub">How data is logically organized, from the smallest piece to the whole database. Click any rung, or press <b>Build</b> to assemble it step by step.</p></div>
+    <div class="fill">
+      <div class="ladder" id="ladder">
+        <div class="rung" data-i="0"><div class="lvl">LEVEL 1</div><div class="ic">&#127991;</div><h4>Character</h4><p>A single letter, digit, or symbol.</p><div class="ex">A &nbsp; 7 &nbsp; %</div><div class="chev">&#10095;</div></div>
+        <div class="rung" data-i="1"><div class="lvl">LEVEL 2</div><div class="ic">&#128203;</div><h4>Field</h4><p>An attribute of an entity, made of characters.</p><div class="ex">salary = 8500</div><div class="chev">&#10095;</div></div>
+        <div class="rung" data-i="2"><div class="lvl">LEVEL 3</div><div class="ic">&#128196;</div><h4>Record</h4><p>All fields describing one entity.</p><div class="ex">name, SSN, pay rate</div><div class="chev">&#10095;</div></div>
+        <div class="rung" data-i="3"><div class="lvl">LEVEL 4</div><div class="ic">&#128209;</div><h4>File / Table</h4><p>A group of related records.</p><div class="ex">the payroll table</div><div class="chev">&#10095;</div></div>
+        <div class="rung" data-i="4"><div class="lvl">LEVEL 5</div><div class="ic">&#128451;</div><h4>Database</h4><p>Integrated, logically related data.</p><div class="ex">the HR database</div><div class="chev">&#10095;</div></div>
+      </div>
+      <div style="margin-top:18px"><button class="btn run" onclick="buildLadder()">&#9654; Build the hierarchy</button>
+      <button class="btn" onclick="showAllRungs()">Show all</button></div>
+    </div>
+  </section>
+
+  <!-- 4 FILE VS DB -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">03 / APPROACHES</div><h2>File processing <span class="em">vs</span> the database approach</h2>
+      <p class="sub">Flip the switch to see why isolated files cause trouble, and how a shared database fixes it.</p></div>
+    <div class="fill reveal">
+      <div class="switchrow">
+        <div class="toggle" id="fvdToggle" onclick="toggleFvd()"><span class="s-file">File processing</span><span class="s-db">Database</span><div class="knob"></div></div>
+        <div class="note" id="fvdNote"><b>File processing:</b> each app keeps its own files. Notice the same customer is stored three times (in red).</div>
+      </div>
+      <div class="fvd">
+        <div class="panelbox" id="fvdLeft"></div>
+        <div class="panelbox">
+          <h4 id="fvdRightTitle">&#9888; Problems</h4>
+          <div id="fvdRight"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 STRUCTURE EXPLORER -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">04 / STRUCTURES</div><h2>Database <span class="em">structure</span> explorer</h2>
+      <p class="sub">Five ways to organize and relate data. Click a structure to see how its records connect.</p></div>
+    <div class="fill reveal">
+      <div class="tabs" id="structTabs"></div>
+      <div class="explorer">
+        <div class="stage" id="structStage"></div>
+        <div class="exinfo" id="structInfo"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 EVALUATION -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">05 / STRUCTURES</div><h2>Evaluating the <span class="em">structures</span></h2>
+      <p class="sub">Each structure trades off flexibility, speed, and the kinds of questions it can answer.</p></div>
+    <div class="fill reveal">
+      <table class="eval">
+        <thead><tr><th>Structure</th><th>Strengths</th><th>Limitations</th></tr></thead>
+        <tbody>
+          <tr><td>Hierarchical</td><td><span class="good">&#43;</span> Fast for structured, routine transactions</td><td><span class="bad">&minus;</span> Cannot handle many-to-many relationships</td></tr>
+          <tr><td>Network</td><td><span class="good">&#43;</span> More flexible than hierarchical</td><td><span class="bad">&minus;</span> Struggles with ad hoc requests</td></tr>
+          <tr class="relational"><td>Relational</td><td><span class="good">&#43;</span> Easy ad hoc queries; easy to maintain</td><td><span class="bad">&minus;</span> Less fast than hierarchical or network</td></tr>
+          <tr><td>Multidimensional</td><td><span class="good">&#43;</span> Excellent for OLAP and fast analytics</td><td><span class="bad">&minus;</span> Specialized; built for analysis, not transactions</td></tr>
+          <tr><td>Object-Oriented</td><td><span class="good">&#43;</span> Handles complex types: graphics, audio, video</td><td><span class="bad">&minus;</span> More complex to design and query</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 7 SQL PLAYGROUND -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">06 / USING THE DATA</div><h2>Live <span class="em">SQL</span> playground</h2>
+      <p class="sub">SQL is the standard language for interrogating a relational database. Edit the query and run it against a real sample table, right here.</p></div>
+    <div class="fill reveal">
+      <div class="sqlwrap">
+        <div class="sqlpane">
+          <div class="editorbox">
+            <div class="editorbar"><span class="b r"></span><span class="b y"></span><span class="b g"></span><span class="ttl">query &middot; employees</span></div>
+            <textarea id="sql" spellcheck="false">SELECT name, dept, salary
+FROM employees
+WHERE salary > 7000
+ORDER BY salary DESC</textarea>
+          </div>
+          <div class="sqlbtns"><button class="btn run" onclick="runSQL()">&#9654; Run query</button>
+            <button class="btn" onclick="showSchema()">View table</button></div>
+          <div class="chips" id="sqlChips"></div>
+        </div>
+        <div class="sqlpane">
+          <div class="resultbox" id="sqlResult"><div class="resmeta">Press <b>Run query</b> to see results.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 DB DEVELOPMENT -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">07 / GOVERNANCE</div><h2>Database <span class="em">development</span></h2>
+      <p class="sub">How databases are designed, documented, and governed.</p></div>
+    <div class="fill">
+      <div class="cards c4">
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128104;&#8205;&#128188;</div><h3>DBA</h3><p>The Database Administrator leads enterprise database development and guards integrity and security.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#9881;</div><h3>DDL</h3><p>Data Definition Language defines the content, relationships, and structure: the schema.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128214;</div><h3>Data dictionary</h3><p>A repository of metadata: data about the data, including definitions, security, and usage rules.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128376;</div><h3>ER diagram</h3><p>Models entities and how they relate before the database is built.</p></div>
+      </div>
+      <div class="note reveal" style="margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px">
+        <b>Logical view</b> = how end users see the data. &nbsp; <b>Physical view</b> = how it is actually stored on hardware. The DBMS bridges the two.</div>
+    </div>
+  </section>
+
+  <!-- 9 TYPES -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">08 / TYPES</div><h2>Types of <span class="em">databases</span></h2>
+      <p class="sub">The major categories found across an organization.</p></div>
+    <div class="fill">
+      <div class="cards c5">
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128190;</div><h3>Operational</h3><p>Detailed data that runs daily operations: customer, inventory, HR.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#127760;</div><h3>Distributed</h3><p>Copies or parts of databases on servers in many locations.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#128279;</div><h3>External</h3><p>Data from the web or paid services, like search engines.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#127916;</div><h3>Hypermedia</h3><p>Hyperlinked pages of multimedia rather than data records.</p></div>
+        <div class="card reveal"><span class="edge"></span><div class="ic">&#127981;</div><h3>Data warehouse</h3><p>Cleaned, historical data used for analysis and decisions.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 ETL -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">09 / WAREHOUSING</div><h2>From raw data to the <span class="em">warehouse</span></h2>
+      <p class="sub">A data warehouse holds cleaned, transformed, historical data. Press <b>Run pipeline</b> to watch data flow through Extract, Transform, and Load.</p></div>
+    <div class="fill reveal">
+      <div class="etl" id="etl">
+        <div class="etlstage" data-s="0"><div class="ic">&#128190;</div><h4>Sources</h4><p>Operational and external systems hold raw, live data.</p></div>
+        <div class="etlarrow"><span class="pkt"></span>&#10142;</div>
+        <div class="etlstage" data-s="1"><div class="ic">&#9881;</div><h4>Extract &amp; clean</h4><p>Data is pulled, scrubbed of errors, and standardized.</p></div>
+        <div class="etlarrow"><span class="pkt"></span>&#10142;</div>
+        <div class="etlstage" data-s="2"><div class="ic">&#127981;</div><h4>Warehouse</h4><p>One consistent historical store, split into data marts.</p></div>
+        <div class="etlarrow"><span class="pkt"></span>&#10142;</div>
+        <div class="etlstage" data-s="3"><div class="ic">&#128202;</div><h4>Analyze</h4><p>Feeds mining, OLAP, research, and decision support.</p></div>
+      </div>
+      <div style="margin-top:20px"><button class="btn run" onclick="runETL()">&#9654; Run pipeline</button></div>
+      <div class="note" style="margin-top:14px"><b>In practice:</b> Applebee's analyzes daily sales to decide what to reorder, and Travelocity mined 600,000 customer comments to respond faster.</div>
+    </div>
+  </section>
+
+  <!-- 11 OLAP CUBE -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">10 / WAREHOUSING</div><h2>The <span class="em">OLAP</span> cube</h2>
+      <p class="sub">Multidimensional databases view data as a cube. Drag to rotate. Click a dimension to slice it.</p></div>
+    <div class="fill reveal">
+      <div class="olap">
+        <div class="scene"><div class="cube" id="cube">
+          <div class="face f-front">PRODUCT<br>&#215;<br>REGION</div>
+          <div class="face f-back">measure:<br>SALES</div>
+          <div class="face f-right">TIME &#8595;</div>
+          <div class="face f-left">REGION &#8595;</div>
+          <div class="face f-top">PRODUCT &#8594;</div>
+          <div class="face f-bottom">total</div>
+        </div></div>
+        <div class="olapinfo">
+          <h3>Slice and dice</h3>
+          <p>Each axis of the cube is a <b style="color:var(--cyan-soft)">dimension</b>: Product, Region, and Time. Each cell holds a measure, like total sales. Managers rotate and slice the cube to answer questions fast, with no new query written from scratch.</p>
+          <div class="dimbtns">
+            <button class="btn" onclick="sliceCube('product')">Slice by Product</button>
+            <button class="btn" onclick="sliceCube('region')">Slice by Region</button>
+            <button class="btn" onclick="sliceCube('time')">Slice by Time</button>
+            <button class="btn" onclick="spinCube()">&#8635; Spin</button>
+          </div>
+          <p class="note" id="olapNote" style="margin-top:14px"><b>Tip:</b> slicing by Time = Q1 turns the 3D cube into a flat table of Product by Region for that quarter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 DATA MINING -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">11 / USING THE DATA</div><h2>Data <span class="em">mining</span></h2>
+      <p class="sub">Mining finds hidden patterns in warehoused data. Try market-basket analysis: pick a product to see what customers tend to buy with it.</p></div>
+    <div class="fill reveal">
+      <div class="basket">
+        <div class="prods" id="prods">
+          <div class="prod sel" data-k="bread"><span class="e">&#127838;</span> Bread</div>
+          <div class="prod" data-k="coffee"><span class="e">&#9749;</span> Coffee</div>
+          <div class="prod" data-k="pasta"><span class="e">&#127837;</span> Pasta</div>
+          <div class="prod" data-k="diapers"><span class="e">&#129752;</span> Diapers</div>
+        </div>
+        <div class="assoc">
+          <h4 id="assocTitle"># Customers who buy Bread also buy...</h4>
+          <div id="assocBars"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 CASE -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">12 / REAL WORLD</div><h2>Opening the <span class="em">data vault</span></h2>
+      <p class="sub">When data is a managed resource, it can become a platform. These firms opened parts of their databases to outside developers.</p></div>
+    <div class="fill">
+      <div class="casegrid">
+        <div class="card reveal"><div class="ic">&#128722;</div><h3>Amazon</h3><p>Spent ~10 years and $1bn building its data vault. Opened it in 2002; 65,000+ developers and businesses tapped in, many becoming partners.</p></div>
+        <div class="card reveal"><div class="ic">&#127760;</div><h3>eBay</h3><p>Opened its $3bn databases in 2003. 15,000+ developers registered, 1,000+ apps appeared, and 41% of listings were uploaded using them.</p></div>
+        <div class="card reveal"><div class="ic">&#128269;</div><h3>Google</h3><p>Moved cautiously: 1,000 free search results a day, more by permission. Opened AdWords to outside apps in 2005.</p></div>
+      </div>
+      <p class="note reveal" style="margin-top:18px;text-align:center"><b>Discussion:</b> should every company open its databases? Weigh new revenue and innovation against losing control of a core asset.</p>
+    </div>
+  </section>
+
+  <!-- 14 CLOSING -->
+  <section class="slide">
+    <div class="closing">
+      <div class="kicker reveal"><span class="dot"></span> CHAPTER 5 &middot; DATA RESOURCE MANAGEMENT</div>
+      <h1 class="reveal">Thank <span class="grad">you</span></h1>
+      <p class="sub reveal" style="margin-top:12px;font-size:20px">Questions &amp; discussion</p>
+      <div class="authors reveal" style="margin-top:30px;border:0;align-items:center;text-align:center">
+        <div class="who">Ahmed Awad &middot; Tariq Salama &middot; Ahmed Sabri &middot; Mahmoud El-Serwy</div>
+        <div class="meta">EMBA IT Strategy &nbsp;|&nbsp; Instructor: Dr. Ghada &nbsp;|&nbsp; 10-06-2026</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="chrome">
+  <span class="counter"><b id="cur">1</b> / <span id="tot">14</span></span>
+  <button class="navbtn" onclick="go(-1)">&#8592;</button>
+  <button class="navbtn" onclick="go(1)">&#8594;</button>
+</div>
+
+<script>
+/* ---------------- deck controller ---------------- */
+const slides=[...document.querySelectorAll('.slide')];
+const dotsWrap=document.getElementById('dots');
+let idx=0;
+slides.forEach((_,i)=>{const d=document.createElement('i');d.onclick=()=>jump(i);dotsWrap.appendChild(d);});
+const dots=[...dotsWrap.children];
+document.getElementById('tot').textContent=slides.length;
+function render(){
+  slides.forEach((s,i)=>s.classList.toggle('active',i===idx));
+  dots.forEach((d,i)=>d.classList.toggle('on',i===idx));
+  document.getElementById('bar').style.width=((idx)/(slides.length-1)*100)+'%';
+  document.getElementById('cur').textContent=idx+1;
+  const enter=slides[idx].dataset.enter;
+  if(enter==='ladder') resetLadder();
+}
+function jump(i){idx=Math.max(0,Math.min(slides.length-1,i));render();}
+function go(d){jump(idx+d);}
+window.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(1);}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(-1);}
+  else if(e.key==='Home'){jump(0);}else if(e.key==='End'){jump(slides.length-1);}
+  else if(e.key==='f'||e.key==='F'){toggleFs();}
+});
+function toggleFs(){if(!document.fullscreenElement)document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();else document.exitFullscreen&&document.exitFullscreen();}
+let tx=0;
+addEventListener('touchstart',e=>tx=e.changedTouches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>55)go(dx<0?1:-1);},{passive:true});
+
+/* ---------------- hierarchy ladder ---------------- */
+const rungs=[...document.querySelectorAll('#ladder .rung')];
+rungs.forEach(r=>r.onclick=()=>{rungs.forEach(x=>x.classList.remove('active'));r.classList.add('active');r.classList.add('shown');});
+function resetLadder(){rungs.forEach(r=>r.classList.remove('shown','active'));}
+function showAllRungs(){rungs.forEach(r=>r.classList.add('shown'));}
+let lt=[];
+function buildLadder(){
+  lt.forEach(clearTimeout);lt=[];resetLadder();
+  rungs.forEach((r,i)=>lt.push(setTimeout(()=>{r.classList.add('shown','active');rungs.forEach((x,j)=>{if(j!==i)x.classList.remove('active');});},i*430)));
+}
+
+/* ---------------- file vs database ---------------- */
+const fvdLeft=document.getElementById('fvdLeft'),fvdRight=document.getElementById('fvdRight');
+function toggleFvd(){document.getElementById('fvdToggle').classList.toggle('db');renderFvd();}
+function renderFvd(){
+  const db=document.getElementById('fvdToggle').classList.contains('db');
+  const note=document.getElementById('fvdNote');
+  if(!db){
+    fvdLeft.innerHTML='<h4>&#128193; Three separate application files</h4>'+
+      '<div class="filebox"><span class="tag">SALES.dat</span><br>cust: <span class="dup">Ahmed Sabri, 0100-123</span>, item, price</div>'+
+      '<div class="filebox"><span class="tag">BILLING.dat</span><br>cust: <span class="dup">Ahmed Sabri, 0100-123</span>, invoice, due</div>'+
+      '<div class="filebox"><span class="tag">SUPPORT.dat</span><br>cust: <span class="dup">Ahmed Sabri, 0100-123</span>, ticket, status</div>';
+    document.getElementById('fvdRightTitle').innerHTML='&#9888; Problems of file processing';
+    fvdRight.innerHTML='<ul style="margin-left:18px;color:var(--muted);font-size:14px;line-height:1.9">'+
+      '<li><b style="color:var(--red)">Redundancy</b> &mdash; the same customer stored 3 times</li>'.replace('&mdash;','-')+
+      '<li><b style="color:var(--red)">No integration</b> - data trapped in isolated files</li>'+
+      '<li><b style="color:var(--red)">Data dependence</b> - programs tied to file formats</li>'+
+      '<li><b style="color:var(--red)">Inconsistency</b> - update one file, others go stale</li></ul>';
+    note.innerHTML='<b>File processing:</b> each app keeps its own files. The same customer is stored three times (in red).';
+  }else{
+    fvdLeft.innerHTML='<h4>&#128451; One shared database</h4>'+
+      '<div class="arrows"><span>SALES</span><span>BILLING</span><span>SUPPORT</span></div>'+
+      '<div class="arrows">&#8595; &#8595; &#8595;</div>'+
+      '<div class="central">CUSTOMER table<br>Ahmed Sabri, 0100-123 &nbsp;(stored once)</div>'+
+      '<p class="note" style="margin-top:12px">All three applications read and write the same record through the DBMS.</p>';
+    document.getElementById('fvdRightTitle').innerHTML='&#10004; Database advantages';
+    fvdRight.innerHTML='<ul style="margin-left:18px;color:var(--muted);font-size:14px;line-height:1.9">'+
+      '<li><b style="color:var(--green)">Minimal redundancy</b> - stored once, shared</li>'+
+      '<li><b style="color:var(--green)">Integrated</b> - related data connected</li>'+
+      '<li><b style="color:var(--green)">Data independence</b> - DBMS hides storage</li>'+
+      '<li><b style="color:var(--green)">Integrity &amp; security</b> - one point of control</li></ul>';
+    note.innerHTML='<b>Database approach:</b> one record, shared by every app through the DBMS.';
+  }
+}
+renderFvd();
+
+/* ---------------- structure explorer ---------------- */
+const structures={
+  hierarchical:{name:'Hierarchical',desc:'Records sit in a tree. Each parent links to many children, but a child has only one parent (one-to-many).',use:'Best for structured, routine transactions.',
+    svg:`<svg viewBox="0 0 360 280"><line class="edge" x1="180" y1="55" x2="90" y2="135"/><line class="edge" x1="180" y1="55" x2="270" y2="135"/><line class="edge" x1="90" y1="165" x2="50" y2="230"/><line class="edge" x1="90" y1="165" x2="130" y2="230"/><line class="edge" x1="270" y1="165" x2="230" y2="230"/><line class="edge" x1="270" y1="165" x2="310" y2="230"/><rect class="node" x="140" y="25" width="80" height="34" rx="7"/><text class="ntext" x="180" y="47">Company</text><rect class="node" x="52" y="135" width="76" height="32" rx="7"/><text class="ntext" x="90" y="156">Dept A</text><rect class="node" x="232" y="135" width="76" height="32" rx="7"/><text class="ntext" x="270" y="156">Dept B</text><rect class="node" x="18" y="230" width="64" height="30" rx="7"/><text class="ntext" x="50" y="250">Emp</text><rect class="node" x="98" y="230" width="64" height="30" rx="7"/><text class="ntext" x="130" y="250">Emp</text><rect class="node" x="198" y="230" width="64" height="30" rx="7"/><text class="ntext" x="230" y="250">Emp</text><rect class="node" x="278" y="230" width="64" height="30" rx="7"/><text class="ntext" x="310" y="250">Emp</text></svg>`},
+  network:{name:'Network',desc:'Records link in many-to-many relationships. A child can have several parents, forming a mesh.',use:'Used in some mainframe DBMS; more flexible than hierarchical.',
+    svg:`<svg viewBox="0 0 360 280"><line class="edge live" x1="100" y1="70" x2="180" y2="150"/><line class="edge live" x1="260" y1="70" x2="180" y2="150"/><line class="edge live" x1="100" y1="70" x2="260" y2="70"/><line class="edge live" x1="180" y1="150" x2="90" y2="225"/><line class="edge live" x1="180" y1="150" x2="270" y2="225"/><line class="edge live" x1="260" y1="70" x2="270" y2="225"/><rect class="node amber" x="62" y="50" width="76" height="34" rx="9"/><text class="ntext" x="100" y="72">Supplier</text><rect class="node amber" x="222" y="50" width="76" height="34" rx="9"/><text class="ntext" x="260" y="72">Project</text><rect class="node" x="142" y="132" width="76" height="34" rx="9"/><text class="ntext" x="180" y="154">Part</text><rect class="node" x="52" y="208" width="76" height="34" rx="9"/><text class="ntext" x="90" y="230">Order</text><rect class="node" x="232" y="208" width="76" height="34" rx="9"/><text class="ntext" x="270" y="230">Invoice</text></svg>`},
+  relational:{name:'Relational',desc:'Data lives in tables of rows (records) and columns (fields). Tables link through a shared key. The most widely used model.',use:'Easy ad hoc queries; the backbone of business systems.',
+    svg:`<svg viewBox="0 0 360 280"><rect class="node" x="20" y="40" width="150" height="120" rx="8"/><text class="ntext" x="95" y="62" style="fill:var(--cyan-soft)">CUSTOMERS</text><line class="edge" x1="20" y1="74" x2="170" y2="74"/><text class="ntext" x="95" y="94">id | name</text><text class="ntext" x="95" y="116">1 | Ahmed</text><text class="ntext" x="95" y="138">2 | Sara</text><rect class="node amber" x="190" y="40" width="150" height="120" rx="8"/><text class="ntext" x="265" y="62" style="fill:var(--amber-soft)">ORDERS</text><line class="edge" x1="190" y1="74" x2="340" y2="74"/><text class="ntext" x="265" y="94">id | cust_id</text><text class="ntext" x="265" y="116">10 | 1</text><text class="ntext" x="265" y="138">11 | 2</text><line class="edge live" x1="170" y1="116" x2="190" y2="116"/><text class="ntext" x="180" y="200" style="fill:var(--cyan-soft)">join on id = cust_id</text></svg>`},
+  multidimensional:{name:'Multidimensional',desc:'A variation of the relational model that views data as cubes. Each cell holds a measure across several dimensions.',use:'Powers OLAP: fast slice-and-dice analytics.',
+    svg:`<svg viewBox="0 0 360 280"><g transform="translate(120,60)"><polygon class="node" points="0,40 80,0 160,40 80,80" /><polygon class="node amber" points="0,40 0,150 80,190 80,80"/><polygon class="node" points="160,40 160,150 80,190 80,80"/><text class="ntext" x="80" y="45">Product</text><text class="ntext" x="35" y="125" transform="rotate(-58 35 125)">Time</text><text class="ntext" x="128" y="125" transform="rotate(58 128 125)">Region</text></g></svg>`},
+  oo:{name:'Object-Oriented',desc:'Bundles data with the methods that act on it as objects. Supports complex types and inheritance.',use:'Multimedia and web apps; basis of object-relational DBs.',
+    svg:`<svg viewBox="0 0 360 280"><rect class="node" x="80" y="40" width="200" height="200" rx="14"/><text class="ntext" x="180" y="70" style="fill:var(--cyan-soft)">object: Account</text><line class="edge" x1="80" y1="86" x2="280" y2="86"/><text class="ntext" x="180" y="116">data: balance, owner</text><line class="edge" x1="110" y1="138" x2="250" y2="138"/><text class="ntext" x="180" y="170" style="fill:var(--amber-soft)">methods()</text><text class="ntext" x="180" y="198">deposit()</text><text class="ntext" x="180" y="222">withdraw()</text></svg>`}
+};
+const tabsWrap=document.getElementById('structTabs');
+Object.keys(structures).forEach((k,i)=>{const b=document.createElement('div');b.className='tab'+(i===0?' on':'');b.textContent=structures[k].name;b.onclick=()=>selStruct(k,b);tabsWrap.appendChild(b);});
+function selStruct(k,btn){
+  [...tabsWrap.children].forEach(t=>t.classList.remove('on'));btn.classList.add('on');
+  const s=structures[k];
+  document.getElementById('structStage').innerHTML=s.svg;
+  document.getElementById('structInfo').innerHTML=`<h3>${s.name}</h3><p>${s.desc}</p><div class="use">&#9654; ${s.use}</div>`;
+}
+selStruct('hierarchical',tabsWrap.children[0]);
+
+/* ---------------- mini SQL engine ---------------- */
+const DB={employees:{cols:['id','name','dept','salary','city'],rows:[
+  [1,'Ahmed','Sales',9200,'Cairo'],[2,'Sara','IT',8400,'Giza'],[3,'Omar','Sales',6100,'Cairo'],
+  [4,'Lina','Finance',11200,'Alexandria'],[5,'Youssef','IT',7300,'Cairo'],[6,'Mona','HR',5400,'Giza'],
+  [7,'Khaled','Finance',9800,'Alexandria'],[8,'Nour','IT',6700,'Cairo'],[9,'Hana','Sales',7600,'Giza'],
+  [10,'Tarek','HR',5900,'Cairo']]}};
+const chips=['SELECT * FROM employees','SELECT name, salary FROM employees WHERE dept = \'IT\'','SELECT name, dept FROM employees WHERE city = \'Cairo\' ORDER BY salary DESC','SELECT dept, COUNT(*) FROM employees','SELECT name FROM employees WHERE salary >= 8000 AND city = \'Cairo\''];
+const chipsWrap=document.getElementById('sqlChips');
+chips.forEach(q=>{const c=document.createElement('span');c.className='chip';c.textContent=q.length>42?q.slice(0,40)+'...':q;c.title=q;c.onclick=()=>{document.getElementById('sql').value=q;runSQL();};chipsWrap.appendChild(c);});
+
+function tokenizeWhere(s){return s;}
+function evalCond(row,cols,cond){
+  cond=cond.trim();
+  // split on OR (lowest precedence), then AND
+  const ors=splitTop(cond,/\bor\b/i);
+  return ors.some(orPart=>{
+    const ands=splitTop(orPart,/\band\b/i);
+    return ands.every(a=>evalSimple(row,cols,a.trim()));
+  });
+}
+function splitTop(s,re){return s.split(re);}
+function evalSimple(row,cols,expr){
+  const m=expr.match(/^([a-zA-Z_]+)\s*(>=|<=|!=|<>|=|>|<|like)\s*(.+)$/i);
+  if(!m)throw new Error('Cannot understand condition: '+expr);
+  const col=m[1].toLowerCase(),op=m[2].toLowerCase();let val=m[3].trim();
+  const ci=cols.indexOf(col);if(ci<0)throw new Error('Unknown column: '+col);
+  let cell=row[ci];
+  const quoted=val.startsWith("'")||val.startsWith('"');
+  val=val.replace(/^['"]|['"]$/g,'');
+  if(!quoted&&!isNaN(parseFloat(val))&&op!=='like'){val=parseFloat(val);}
+  if(op==='like'){const re=new RegExp('^'+val.replace(/%/g,'.*').replace(/_/g,'.')+'$','i');return re.test(String(cell));}
+  if(op==='='){return String(cell).toLowerCase()==String(val).toLowerCase();}
+  if(op==='!='||op==='<>'){return String(cell).toLowerCase()!=String(val).toLowerCase();}
+  cell=typeof cell==='number'?cell:parseFloat(cell);val=typeof val==='number'?val:parseFloat(val);
+  if(op==='>')return cell>val;if(op==='<')return cell<val;if(op==='>=')return cell>=val;if(op==='<=')return cell<=val;
+  throw new Error('Unsupported operator: '+op);
+}
+function runSQL(){
+  const box=document.getElementById('sqlResult');
+  let q=document.getElementById('sql').value.trim().replace(/;$/,'');
+  try{
+    const m=q.match(/^select\s+(.+?)\s+from\s+([a-zA-Z_]+)(?:\s+where\s+(.+?))?(?:\s+order\s+by\s+([a-zA-Z_]+)(\s+desc|\s+asc)?)?(?:\s+limit\s+(\d+))?$/is);
+    if(!m)throw new Error('Use: SELECT cols FROM employees [WHERE ...] [ORDER BY col [DESC]] [LIMIT n]');
+    let sel=m[1].trim(),table=m[2].toLowerCase(),where=m[3],ob=m[4],dir=(m[5]||'').trim().toLowerCase(),lim=m[6];
+    if(!DB[table])throw new Error('Only the "employees" table exists.');
+    const cols=DB[table].cols;let rows=DB[table].rows.slice();
+    if(where)rows=rows.filter(r=>evalCond(r,cols,where));
+    // aggregate COUNT(*)
+    const countAgg=/count\s*\(\s*\*\s*\)/i.test(sel);
+    const groupCol=(!/^\s*count/i.test(sel)&&countAgg)?sel.split(',')[0].trim().toLowerCase():null;
+    if(countAgg){
+      let out,outCols;
+      if(groupCol&&cols.includes(groupCol)){
+        const gi=cols.indexOf(groupCol);const map={};
+        rows.forEach(r=>{map[r[gi]]=(map[r[gi]]||0)+1;});
+        outCols=[groupCol,'count'];out=Object.keys(map).map(k=>[k,map[k]]);
+      }else{outCols=['count'];out=[[rows.length]];}
+      return renderResult(box,outCols,out,out.length);
+    }
+    let outCols,proj;
+    if(sel==='*'){outCols=cols;proj=rows;}
+    else{
+      outCols=sel.split(',').map(c=>c.trim().toLowerCase());
+      const bad=outCols.find(c=>!cols.includes(c));if(bad)throw new Error('Unknown column: '+bad);
+      proj=rows.map(r=>outCols.map(c=>r[cols.indexOf(c)]));
+    }
+    if(ob&&cols.includes(ob.toLowerCase())){
+      const oi=outCols.indexOf(ob.toLowerCase());
+      if(oi>=0)proj.sort((a,b)=>{const x=a[oi],y=b[oi];const n=(typeof x==='number');let c=n?x-y:String(x).localeCompare(String(y));return dir==='desc'?-c:c;});
+    }
+    if(lim)proj=proj.slice(0,parseInt(lim));
+    renderResult(box,outCols,proj,proj.length);
+  }catch(e){box.innerHTML='<div class="err">&#9888; '+e.message+'</div>';}
+}
+function renderResult(box,cols,rows,n){
+  if(!rows.length){box.innerHTML='<div class="resmeta">0 rows returned.</div>';return;}
+  let h='<table><thead><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>';
+  h+=rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('');
+  h+='</tbody></table><div class="resmeta">'+n+' row'+(n===1?'':'s')+' returned.</div>';
+  box.innerHTML=h;
+}
+function showSchema(){
+  const t=DB.employees;
+  renderResult(document.getElementById('sqlResult'),t.cols,t.rows,t.rows.length);
+}
+
+/* ---------------- ETL ---------------- */
+function runETL(){
+  const stages=[...document.querySelectorAll('#etl .etlstage')];
+  const arrows=[...document.querySelectorAll('#etl .etlarrow')];
+  stages.forEach(s=>s.classList.remove('lit'));arrows.forEach(a=>a.classList.remove('flow'));
+  stages.forEach((s,i)=>setTimeout(()=>{
+    stages.forEach(x=>x.classList.remove('lit'));s.classList.add('lit');
+    if(arrows[i])arrows[i].classList.add('flow');
+  },i*750));
+  setTimeout(()=>stages.forEach(s=>s.classList.add('lit')),stages.length*750+200);
+}
+
+/* ---------------- OLAP cube ---------------- */
+const cube=document.getElementById('cube');let rx=-22,ry=-32,spin=null;
+function setCube(){cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;}
+let dragging=false,px,py;
+cube.parentElement.addEventListener('mousedown',e=>{dragging=true;px=e.clientX;py=e.clientY;if(spin){cancelAnimationFrame(spin);spin=null;}});
+addEventListener('mouseup',()=>dragging=false);
+addEventListener('mousemove',e=>{if(!dragging)return;ry+=(e.clientX-px)*0.5;rx-=(e.clientY-py)*0.5;px=e.clientX;py=e.clientY;setCube();});
+cube.parentElement.addEventListener('touchmove',e=>{const t=e.touches[0];if(px!=null){ry+=(t.clientX-px)*0.5;rx-=(t.clientY-py)*0.5;setCube();}px=t.clientX;py=t.clientY;},{passive:true});
+cube.parentElement.addEventListener('touchend',()=>{px=py=null;});
+function spinCube(){if(spin){cancelAnimationFrame(spin);spin=null;return;}const step=()=>{ry+=0.5;setCube();spin=requestAnimationFrame(step);};step();}
+function sliceCube(dim){
+  const faces=[...cube.querySelectorAll('.face')];faces.forEach(f=>f.classList.remove('lit'));
+  const note=document.getElementById('olapNote');
+  if(dim==='product'){cube.querySelector('.f-top').classList.add('lit');note.innerHTML='<b>Sliced by Product:</b> hold one product fixed, read Sales across every Region and Time period.';}
+  if(dim==='region'){cube.querySelector('.f-left').classList.add('lit');note.innerHTML='<b>Sliced by Region:</b> hold one region fixed, compare Products over Time.';}
+  if(dim==='time'){cube.querySelector('.f-right').classList.add('lit');note.innerHTML='<b>Sliced by Time = Q1:</b> the 3D cube becomes a flat Product-by-Region table for that quarter.';}
+}
+
+/* ---------------- market basket ---------------- */
+const basket={
+  bread:[['Butter',82],['Jam',64],['Milk',51]],
+  coffee:[['Sugar',88],['Milk',73],['Cookies',47]],
+  pasta:[['Tomato sauce',79],['Cheese',61],['Olive oil',44]],
+  diapers:[['Baby wipes',76],['Beer',55],['Milk',49]]
+};
+const labels={bread:'Bread',coffee:'Coffee',pasta:'Pasta',diapers:'Diapers'};
+function showBasket(k){
+  document.getElementById('assocTitle').textContent='# Customers who buy '+labels[k]+' also buy...';
+  const wrap=document.getElementById('assocBars');wrap.innerHTML='';
+  basket[k].forEach((b,i)=>{
+    const el=document.createElement('div');el.className='bar';
+    el.innerHTML=`<div class="lab"><span>${b[0]}</span><b>${b[1]}%</b></div><div class="track"><div class="fillbar"></div></div>`;
+    wrap.appendChild(el);
+    setTimeout(()=>el.querySelector('.fillbar').style.width=b[1]+'%',60+i*120);
+  });
+}
+[...document.querySelectorAll('#prods .prod')].forEach(p=>p.onclick=()=>{
+  document.querySelectorAll('#prods .prod').forEach(x=>x.classList.remove('sel'));p.classList.add('sel');showBasket(p.dataset.k);
+});
+showBasket('bread');
+
+render();
+</script>
+</body>
+</html>
