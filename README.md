@@ -1,6 +1,6 @@
 # EMBA IT Strategy, Group Reference Hub
 
-A single live reference site for our two EMBA "IT Strategy" assignments, built for the group (Ahmed Awad, Tariq Salama, Ahmed Sabri, Mahmoud El-Serwy). It is **not** the graded submission, it is a working hub so any of us can read the full detail and present with confidence. Everything is written in **plain English**, and every technical term is explained the first time it appears (there is also a full word list at the bottom of the page), so no banking or computer background is needed.
+A single live reference site for our two EMBA "IT Strategy" assignments, built for the group (Ahmed Awad, Tariq Salama, Ahmed Sabri, Mahmoud Ibrahim). It is **not** the graded submission, it is a working hub so any of us can read the full detail and present with confidence. Everything is written in **plain English**, and every technical term is explained the first time it appears (there is also a full word list at the bottom of the page), so no banking or computer background is needed.
 
 **Live site:** https://amsamms.github.io/emba-it-strategy/
 
