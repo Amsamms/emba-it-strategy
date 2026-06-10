@@ -224,6 +224,37 @@
   .etlarrow.flow .pkt{animation:pkt .6s ease forwards}
   @keyframes pkt{0%{opacity:1;transform:translateX(-22px)}100%{opacity:0;transform:translateX(22px)}}
 
+  /* ===== warehouse architecture ===== */
+  .arch{display:flex;align-items:stretch;gap:4px;width:100%}
+  .archcol{display:flex;flex-direction:column;min-width:0;flex:1 1 0}
+  .archhd{font-family:var(--mono);font-size:clamp(10px,.85vw,12px);letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);text-align:center;margin-bottom:10px;font-weight:600}
+  .archbox{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 13px;display:flex;flex-direction:column;justify-content:center}
+  .archbox.cyl{background:linear-gradient(180deg,var(--panel2),var(--panel));border-color:var(--line2);align-items:center;text-align:center}
+  .archlist{list-style:none;margin:0;padding:0}
+  .archlist li{position:relative;padding:7px 0 7px 20px;font-size:clamp(12px,1vw,15px);color:var(--ink);border-bottom:1px dashed var(--line)}
+  .archlist li:last-child{border-bottom:none}
+  .archlist li::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+  .archlist li b{color:var(--cyan-soft);font-weight:600}
+  .archetl{text-align:center}
+  .archetl .ic{font-size:clamp(28px,3vw,38px);margin-bottom:8px}
+  .archetl h4{font-family:var(--display);font-size:clamp(16px,1.6vw,21px);color:#fff;margin-bottom:6px}
+  .archetl p{font-size:clamp(11px,1vw,13.5px);color:var(--muted);margin:0;line-height:1.55}
+  .cyl .disc{width:clamp(70px,7vw,96px);aspect-ratio:1;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:grid;place-items:center;color:#04101f;font-family:var(--display);font-weight:700;font-size:clamp(12px,1.2vw,15px);line-height:1.1;box-shadow:0 0 0 7px rgba(61,139,255,.12),0 12px 28px rgba(0,0,0,.35);margin-bottom:12px}
+  .cyl .disc small{display:block;font-size:.78em}
+  .marts{display:flex;flex-direction:column;gap:11px;justify-content:center}
+  .mart{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:12px 8px;text-align:center;font-family:var(--mono);font-size:clamp(11px,1vw,13px);letter-spacing:1px;color:var(--cyan-soft)}
+  .bicards{display:flex;flex-direction:column;gap:11px;justify-content:center}
+  .bicard{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+  .bicard .ic{font-size:clamp(18px,1.8vw,23px)}
+  .bicard span{font-size:clamp(12px,1.1vw,15px);color:var(--ink);font-weight:600}
+  .archflow{display:grid;place-items:center;color:var(--faint);font-size:clamp(16px,1.8vw,24px);align-self:center}
+  .archbands{display:flex;gap:4px;margin-top:16px}
+  .band{flex:1;min-width:0;text-align:center;font-family:var(--mono);font-size:clamp(10px,1vw,13px);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;padding:10px 6px;border-radius:9px}
+  .band.oltp{background:linear-gradient(135deg,#5a6b82,#3c4a5e);color:#eaf2ff}
+  .band.lake{background:linear-gradient(135deg,var(--amber),#b8801c);color:#1a1205}
+  .band.olap{background:linear-gradient(135deg,#cfe0f5,#9fb6d4);color:#0a1830}
+  .band.an{background:linear-gradient(135deg,var(--green),#1f9c63);color:#04140b}
+
   /* ===== OLAP cube ===== */
   .olap{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;height:100%}
   .scene{perspective:900px;display:grid;place-items:center;height:340px}
@@ -452,9 +483,76 @@ ORDER BY salary DESC</textarea>
     </div>
   </section>
 
+  <!-- 11 WAREHOUSE ARCHITECTURE -->
+  <section class="slide">
+    <div class="slidehead reveal"><div class="num">10 / WAREHOUSING</div><h2>The full <span class="em">warehouse architecture</span></h2>
+      <p class="sub">The complete flow: operational sources are staged through ETL, consolidated in the warehouse, split into focused data marts, then served to the BI layer.</p></div>
+    <div class="fill reveal">
+      <div class="arch">
+        <div class="archcol">
+          <div class="archhd">Data Source</div>
+          <div class="archbox">
+            <ul class="archlist">
+              <li><b>Flat files</b></li>
+              <li>CRM</li>
+              <li>ERP</li>
+              <li>Billing</li>
+              <li>Supply chain</li>
+            </ul>
+          </div>
+        </div>
+        <div class="archflow">&#10142;</div>
+        <div class="archcol">
+          <div class="archhd">Data Staging</div>
+          <div class="archbox archetl">
+            <div class="ic">&#9881;</div>
+            <h4>ETL</h4>
+            <p>Extract, Transform and Load process</p>
+          </div>
+        </div>
+        <div class="archflow">&#10142;</div>
+        <div class="archcol">
+          <div class="archhd">Data Warehouse</div>
+          <div class="archbox cyl">
+            <div class="disc">DATA<small>WHSE</small></div>
+            <p class="muted" style="font-size:13px;margin:0">One consistent historical store</p>
+          </div>
+        </div>
+        <div class="archflow">&#10142;</div>
+        <div class="archcol">
+          <div class="archhd">Data Marts</div>
+          <div class="archbox">
+            <div class="marts">
+              <div class="mart">Data Mart</div>
+              <div class="mart">Data Mart</div>
+            </div>
+          </div>
+        </div>
+        <div class="archflow">&#10142;</div>
+        <div class="archcol">
+          <div class="archhd">BI Layer</div>
+          <div class="archbox">
+            <div class="bicards">
+              <div class="bicard"><span class="ic">&#128203;</span><span>Reporting</span></div>
+              <div class="bicard"><span class="ic">&#128200;</span><span>Analytics</span></div>
+              <div class="bicard"><span class="ic">&#9935;</span><span>Data Mining</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="archbands">
+        <div class="band oltp">OLTP</div>
+        <div class="band lake">Datalake</div>
+        <div class="band olap">OLAP</div>
+        <div class="band an">Analytics</div>
+      </div>
+      <div class="note" style="margin-top:14px;text-align:center"><b>Figure 1:</b> Data Warehouse Architecture. The OLTP band is operational; OLAP is the analytical warehouse layer feeding the BI tools.</div>
+    </div>
+  </section>
+
   <!-- 11 OLAP CUBE -->
   <section class="slide">
-    <div class="slidehead reveal"><div class="num">10 / WAREHOUSING</div><h2>The <span class="em">OLAP</span> cube</h2>
+    <div class="slidehead reveal"><div class="num">11 / WAREHOUSING</div><h2>The <span class="em">OLAP</span> cube</h2>
       <p class="sub">Multidimensional databases view data as a cube. Drag to rotate. Click a dimension to slice it.</p></div>
     <div class="fill reveal">
       <div class="olap">
@@ -483,7 +581,7 @@ ORDER BY salary DESC</textarea>
 
   <!-- 12 DATA MINING -->
   <section class="slide">
-    <div class="slidehead reveal"><div class="num">11 / USING THE DATA</div><h2>Data <span class="em">mining</span></h2>
+    <div class="slidehead reveal"><div class="num">12 / USING THE DATA</div><h2>Data <span class="em">mining</span></h2>
       <p class="sub">Mining finds hidden patterns in warehoused data. Try market-basket analysis: pick a product to see what customers tend to buy with it.</p></div>
     <div class="fill reveal">
       <div class="basket">
@@ -503,7 +601,7 @@ ORDER BY salary DESC</textarea>
 
   <!-- 13 CASE -->
   <section class="slide">
-    <div class="slidehead reveal"><div class="num">12 / REAL WORLD</div><h2>Opening the <span class="em">data vault</span></h2>
+    <div class="slidehead reveal"><div class="num">13 / REAL WORLD</div><h2>Opening the <span class="em">data vault</span></h2>
       <p class="sub">When data is a managed resource, it can become a platform. These firms opened parts of their databases to outside developers.</p></div>
     <div class="fill">
       <div class="casegrid">
